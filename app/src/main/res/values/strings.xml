@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Sereno</string>
+    <string name="onboarding_title">Achieve calmness through\nincremental progress</string>
+    <string name="mute">Mute UnMute</string>
+    <string name="onboarding_sub_title">Explore emotional well-\nbeing together.</string>
+    <string name="login">Login</string>
+    <string name="login_text">Login</string>
+</resources>
