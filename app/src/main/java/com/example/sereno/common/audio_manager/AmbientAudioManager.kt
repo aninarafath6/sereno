@@ -66,9 +66,4 @@ object AmbientAudioManager {
         }
     }
 
-    fun release() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-        scope.cancel()
-    }
 }

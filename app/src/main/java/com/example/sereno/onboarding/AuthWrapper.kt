@@ -37,14 +37,32 @@ class AuthWrapper : AppCompatActivity() {
 
     private fun redirect() {
         lifecycleScope.launch {
+            delay(FADE_DELAY_MS)
+            fadeTitle(true)
             val intent: Intent = if (SupabaseManager.isUserAuthenticated()) {
                 Intent(this@AuthWrapper, HomeActivity::class.java)
             } else {
                 Intent(this@AuthWrapper, MainActivity::class.java)
             }
             overridePendingTransition(0, 0)
+
+            delay(LOADING_MOCK_MS)
+            fadeTitle(false)
+            delay(FADE_DELAY_MS)
             startActivity(intent)
             finish()
         }
+    }
+
+    private fun fadeTitle(show: Boolean) {
+        binding.onboardingTitle.animate().apply {
+            duration = FADE_DELAY_MS
+            alpha(if (show) .75f else 0f)
+        }.start()
+    }
+
+    companion object {
+        private const val FADE_DELAY_MS = 300L
+        private const val LOADING_MOCK_MS = 1500L
     }
 }

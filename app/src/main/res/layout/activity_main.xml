@@ -46,7 +46,9 @@
 
             <include
                 android:id="@+id/volumeButton"
-                layout="@layout/volume_button" />
+                layout="@layout/volume_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp" />
 
         </LinearLayout>
 
@@ -89,8 +91,8 @@
                 <LinearLayout
                     android:id="@+id/buttonContent"
                     android:layout_width="wrap_content"
-                    android:gravity="center"
                     android:layout_height="25dp"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView

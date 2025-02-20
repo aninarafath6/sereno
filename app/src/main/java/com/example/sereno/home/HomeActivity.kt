@@ -1,21 +1,54 @@
 package com.example.sereno.home
 
+import AmbientAudioManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.sereno.R
+import com.example.sereno.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityHomeBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_home)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        AmbientAudioManager.init(this,R.raw.calm_ambient)
+
+        initListeners()
+        initObservers()
+    }
+
+    private fun initListeners() {
+        binding.volumeOnOff.muteButton.setOnClickListener {
+            AmbientAudioManager.toggleMute(this)
+        }
+    }
+
+    private fun initObservers() {
+        AmbientAudioManager.getMuteStatus().observe(this) { isMuted ->
+            val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
+            binding.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        AmbientAudioManager.toggleMute(this, shouldMute = false)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        AmbientAudioManager.toggleMute(this, shouldMute = true)
     }
 }

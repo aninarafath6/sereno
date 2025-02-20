@@ -4,13 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:theme="@style/Base.Theme.Sereno"
-    android:gravity="center"
     android:background="@color/primary"
+    android:gravity="center"
+    android:theme="@style/Base.Theme.Sereno"
     tools:context=".onboarding.views.MainActivity">
 
-    <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/onboardingTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:alpha=".1"
+        android:text="@string/pause_reset_thrive"
+        android:textColor="#fff" />
+
 </LinearLayout>
