@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.sereno.R
+import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
@@ -22,16 +23,17 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        AmbientAudioManager.init(this,R.raw.calm_ambient)
+        AmbientAudioManager.init(this, R.raw.calm_ambient)
 
         initListeners()
         initObservers()
     }
 
     private fun initListeners() {
-        binding.volumeOnOff.muteButton.setOnClickListener {
+        binding.volumeOnOff.muteButton.onClickWithHaptics {
             AmbientAudioManager.toggleMute(this)
         }
+        binding.feeling.onClickWithHaptics {}
     }
 
     private fun initObservers() {

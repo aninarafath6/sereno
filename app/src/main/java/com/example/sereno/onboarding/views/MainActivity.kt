@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToHome() {
+        AmbientAudioManager.toggleMute(this, shouldMute = true)
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
