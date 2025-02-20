@@ -69,29 +69,46 @@
                 android:textSize="16sp" />
 
             <LinearLayout
+                android:id="@+id/login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:animateLayoutChanges="true"
                 android:background="@drawable/volume_btn_bg"
+                android:foreground="@drawable/ripple_overlay"
                 android:gravity="center"
                 android:paddingHorizontal="28dp"
                 android:paddingVertical="15dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/login_text"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:visibility="gone" />
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="14dp"
-                    android:layout_marginStart="12dp"
-                    android:contentDescription="@string/login"
-                    android:src="@drawable/ic_arrow_next" />
+                <LinearLayout
+                    android:id="@+id/buttonContent"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_height="25dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/login_text"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="12dp"
+                        android:contentDescription="@string/login"
+                        android:src="@drawable/ic_arrow_next" />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
