@@ -2,6 +2,8 @@ package com.example.sereno.home
 
 import AmbientAudioManager
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -9,6 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.sereno.R
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
+import org.geeksforgeeks.demo.BottomSheetDialog
+
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -33,7 +37,9 @@ class HomeActivity : AppCompatActivity() {
         binding.volumeOnOff.muteButton.onClickWithHaptics {
             AmbientAudioManager.toggleMute(this)
         }
-        binding.feeling.onClickWithHaptics {}
+        binding.feeling.onClickWithHaptics {
+            showBottomSheet()
+        }
     }
 
     private fun initObservers() {
@@ -43,6 +49,15 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun showBottomSheet() {
+        val bottomSheet =
+            BottomSheetDialog()
+        bottomSheet.show(
+            supportFragmentManager,
+            "ModalBottomSheet"
+        )
+    }
 
     override fun onResume() {
         super.onResume()

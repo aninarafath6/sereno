@@ -60,5 +60,6 @@ dependencies {
     implementation("io.ktor:ktor-client-android:3.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.kotlinxCoroutines}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${libs.versions.kotlinxCoroutines}")
+    implementation("com.google.android.material:material:1.12.0")
 
 }
