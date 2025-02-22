@@ -31,6 +31,10 @@
             layout="@layout/home_feeling_card" />
 
         <include
+            android:id="@+id/homeWeekScoreCard"
+            layout="@layout/home_week_mood_score_card" />
+
+        <include
             android:id="@+id/homeTherapyCard"
             layout="@layout/home_therapy_card" />
 
@@ -38,6 +42,10 @@
             android:id="@+id/homePremiumCard"
             layout="@layout/premium_offer_card" />
 
-    </LinearLayout>
+        <include
+            android:id="@+id/homeAmbientModeCard"
+            layout="@layout/home_ambient_mode_card"
+            />
 
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
