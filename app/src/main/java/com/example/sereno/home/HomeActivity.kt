@@ -2,6 +2,7 @@ package com.example.sereno.home
 
 import AmbientAudioManager
 import BottomSheetDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -10,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
+import com.example.sereno.chat.views.ChatActivity
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 import com.example.sereno.home.adapters.ArticlesAdapter
@@ -46,7 +48,9 @@ class HomeActivity : AppCompatActivity() {
             showBottomSheet()
         }
         binding.homeWeekScoreCard.root.onClickWithHaptics { }
-        binding.homeTherapyCard.chat.onClickWithHaptics { }
+        binding.homeTherapyCard.chat.onClickWithHaptics {
+            startActivity(Intent(this, ChatActivity::class.java))
+        }
         binding.homeTherapyCard.call.onClickWithHaptics { }
         binding.homePremiumCard.root.onClickWithHaptics { }
         binding.homeAmbientModeCard.focus.onClickWithHaptics { }
