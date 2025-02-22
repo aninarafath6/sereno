@@ -34,6 +34,10 @@
             android:id="@+id/homeTherapyCard"
             layout="@layout/home_therapy_card" />
 
+        <include
+            android:id="@+id/homePremiumCard"
+            layout="@layout/premium_offer_card" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/helvetica"
         android:text="@string/what_is_your_current_feeling"
         android:textColor="@color/white"
         android:textSize="16sp" />

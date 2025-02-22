@@ -39,6 +39,7 @@ class HomeActivity : AppCompatActivity() {
         }
         binding.homeTherapyCard.chat.onClickWithHaptics { }
         binding.homeTherapyCard.call.onClickWithHaptics { }
+        binding.homePremiumCard.root.onClickWithHaptics { }
     }
 
     private fun initObservers() {

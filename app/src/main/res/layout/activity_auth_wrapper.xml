@@ -14,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
+        android:fontFamily="@font/helvetica"
         android:alpha=".1"
         android:text="@string/pause_reset_thrive"
         android:textColor="#fff" />
