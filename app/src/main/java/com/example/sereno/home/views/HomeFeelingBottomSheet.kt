@@ -1,6 +1,3 @@
-package org.geeksforgeeks.demo
-
-import GridSpacingItemDecoration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +30,7 @@ class BottomSheetDialog : BottomSheetDialogFragment() {
     )
     private val adapter = FeelingsAdapter(feelingsList) {
         if (!::binding.isInitialized) return@FeelingsAdapter
-        binding.continueButton.root.isEnabled = true
+        binding.continueButton.isEnabled = true
         selectedFeeling = it
     }
 
@@ -48,7 +45,7 @@ class BottomSheetDialog : BottomSheetDialogFragment() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
-        binding.continueButton.root.isEnabled = false
+        binding.continueButton.isEnabled = false
         initListeners()
         initRv()
         return binding.root
@@ -75,7 +72,7 @@ class BottomSheetDialog : BottomSheetDialogFragment() {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
             dismiss()
         }
-        binding.continueButton.root.onClickWithHaptics {
+        binding.continueButton.onClickWithHaptics {
             if (selectedFeeling == null) {
                 Toast.makeText(context, "Please select a feeling", Toast.LENGTH_SHORT).show()
             } else {

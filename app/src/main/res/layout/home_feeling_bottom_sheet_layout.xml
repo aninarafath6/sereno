@@ -42,11 +42,10 @@
         tools:itemCount="6"
         tools:listitem="@layout/feeling_bottom_sheet_item" />
 
-    <include
+    <com.example.sereno.common.views.CustomButton
         android:id="@+id/continueButton"
-        layout="@layout/primary_button"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="34dp" />
-
+        android:layout_marginTop="34dp"
+        app:text="@string/continue_new" />
 </LinearLayout>

@@ -1,9 +1,8 @@
 package com.example.sereno.home
 
 import AmbientAudioManager
+import BottomSheetDialog
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,8 +10,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.sereno.R
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
-import org.geeksforgeeks.demo.BottomSheetDialog
-
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -34,21 +31,22 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        binding.volumeOnOff.muteButton.onClickWithHaptics {
+        binding.homeHeading.volumeOnOff.muteButton.onClickWithHaptics {
             AmbientAudioManager.toggleMute(this)
         }
-        binding.feeling.onClickWithHaptics {
+        binding.homeFeelingCard.feeling.onClickWithHaptics {
             showBottomSheet()
         }
+        binding.homeTherapyCard.chat.onClickWithHaptics { }
+        binding.homeTherapyCard.call.onClickWithHaptics { }
     }
 
     private fun initObservers() {
         AmbientAudioManager.getMuteStatus().observe(this) { isMuted ->
             val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
-            binding.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
+            binding.homeHeading.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
         }
     }
-
 
     private fun showBottomSheet() {
         val bottomSheet =

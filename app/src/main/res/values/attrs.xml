@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ButtonStyle">
+        <attr name="icon" format="reference" />
+        <attr name="text" format="string" />
+        <attr name="iconSize" format="dimension" />
+        <attr name="size" format="enum">
+            <enum name="small" value="0" />
+            <enum name="normal" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>
