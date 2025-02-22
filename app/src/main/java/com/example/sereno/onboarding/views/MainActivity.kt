@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
             val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
             binding.volumeButton.ivMuteUnMute.setImageResource(iconRes)
         }
-        vm.isLoading().observe(this){
+        vm.isLoading().observe(this) {
             binding.buttonContent.isVisible = !it
             binding.loading.isVisible = it
         }
@@ -135,8 +135,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        super.onPause()
         AmbientAudioManager.toggleMute(this, shouldMute = true)
+        super.onPause()
     }
 
     override fun onResume() {

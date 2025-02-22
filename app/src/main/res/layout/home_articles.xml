@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:drawablePadding="4dp"
+        android:fontFamily="@font/helvetica_bold"
+        android:text="@string/personalised_articles"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:drawableEndCompat="@drawable/ic_info" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/articles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_24dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/article_item" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:alpha=".6"
+        android:text="@string/you_will_receive_personalized_articles_after_attending_na_therapy_session"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="italic" />
+
+</LinearLayout>
+

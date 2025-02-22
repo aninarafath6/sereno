@@ -10,6 +10,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
         android:src="@drawable/home"
         app:layout_constraintTop_toTopOf="parent" />
@@ -18,7 +19,6 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="24dp"
         android:layout_marginTop="10dp"
         android:orientation="vertical">
 
@@ -26,26 +26,46 @@
             android:id="@+id/homeHeading"
             layout="@layout/home_heading" />
 
-        <include
-            android:id="@+id/homeFeelingCard"
-            layout="@layout/home_feeling_card" />
 
-        <include
-            android:id="@+id/homeWeekScoreCard"
-            layout="@layout/home_week_mood_score_card" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-        <include
-            android:id="@+id/homeTherapyCard"
-            layout="@layout/home_therapy_card" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <include
-            android:id="@+id/homePremiumCard"
-            layout="@layout/premium_offer_card" />
+                <include
+                    android:id="@+id/homeFeelingCard"
+                    layout="@layout/home_feeling_card" />
 
-        <include
-            android:id="@+id/homeAmbientModeCard"
-            layout="@layout/home_ambient_mode_card"
-            />
+                <include
+                    android:id="@+id/homeWeekScoreCard"
+                    layout="@layout/home_week_mood_score_card" />
 
+                <include
+                    android:id="@+id/homeTherapyCard"
+                    layout="@layout/home_therapy_card" />
+
+                <include
+                    android:id="@+id/homePremiumCard"
+                    layout="@layout/premium_offer_card" />
+
+                <include
+                    android:id="@+id/homeAmbientModeCard"
+                    layout="@layout/home_ambient_mode_card" />
+
+                <include
+                    android:id="@+id/homeArticlesCard"
+                    layout="@layout/home_articles" />
+
+            </LinearLayout>
+
+        </ScrollView>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

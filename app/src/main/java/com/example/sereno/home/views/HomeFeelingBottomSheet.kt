@@ -10,6 +10,7 @@ import com.example.sereno.R
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.HomeFeelingBottomSheetLayoutBinding
 import com.example.sereno.home.adapters.FeelingsAdapter
+import com.example.sereno.home.item_decorator.GridSpacingItemDecoration
 import com.example.sereno.home.model.FeelingItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

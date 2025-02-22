@@ -61,5 +61,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.kotlinxCoroutines}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${libs.versions.kotlinxCoroutines}")
     implementation("com.google.android.material:material:1.12.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 }

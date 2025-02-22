@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginTop="24dp"
+    android:layout_marginHorizontal="24dp"
     android:background="@drawable/home_item_bg"
     android:gravity="center"
     android:orientation="horizontal"
@@ -20,9 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica_bold"
-            android:text="Weekly Mood score"
+            android:text="@string/weekly_mood_score"
             android:textColor="@color/white"
-            android:textSize="16dp" />
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -30,9 +30,9 @@
             android:layout_marginTop="2dp"
             android:alpha=".6"
             android:fontFamily="@font/helvetica"
-            android:text="First Week of Jan"
+            android:text="@string/first_week_of_jan"
             android:textColor="@color/white"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/helvetica_bold"
-        android:text="3.1/5"
+        android:text="@string/_3_1_5"
         android:textColor="@color/white"
-        android:textSize="32dp" />
+        android:textSize="32sp" />
 </LinearLayout>

@@ -10,4 +10,13 @@
     <string name="how_are_you_feeling">How are you feeling?</string>
     <string name="calm">Calm</string>
     <string name="continue_new">Continue</string>
+    <string name="weekly_mood_score">Weekly Mood score</string>
+    <string name="first_week_of_jan">First Week of Jan</string>
+    <string name="_3_1_5">3.1/5</string>
+    <string name="personalised_articles">Personalised Articles</string>
+    <string name="info">info</string>
+    <string name="you_will_receive_personalized_articles_after_attending_na_therapy_session">You will receive personalized articles after attending a therapy session.</string>
+    <string name="article">article</string>
+    <string name="best_way_to_deal_with_salman_in_your_current_situation">Best way to deal with Salman in your current situation</string>
+    <string name="today">Today</string>
 </resources>

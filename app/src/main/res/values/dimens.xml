@@ -2,4 +2,7 @@
 <resources>
     <dimen name="spacing_20dp">20dp</dimen>
     <dimen name="spacing_24dp">24dp</dimen>
+    <dimen name="_18dp">18dp</dimen>
+    <dimen name="_12dp">12dp</dimen>
+    <dimen name="_10dp">10dp</dimen>
 </resources>

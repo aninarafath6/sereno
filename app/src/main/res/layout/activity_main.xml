@@ -40,6 +40,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/helvetica"
+                android:lineSpacingExtra="8dp"
                 android:text="@string/onboarding_title"
                 android:textColor="#DBFFFFFF"
                 android:textSize="22sp" />
@@ -48,7 +50,8 @@
                 android:id="@+id/volumeButton"
                 layout="@layout/volume_button"
                 android:layout_width="48dp"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp" />
 
         </LinearLayout>
 
@@ -65,6 +68,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/helvetica"
+
                 android:lineHeight="22dp"
                 android:text="@string/onboarding_sub_title"
                 android:textColor="@color/white"
