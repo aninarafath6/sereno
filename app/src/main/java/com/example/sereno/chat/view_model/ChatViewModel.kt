@@ -14,7 +14,11 @@ class ChatViewModel : ViewModel() {
 
     fun setInitialChats() {
         _chats.value = listOf(
-            ChatModel("Hey, I'm your personalized AI therapist. Feel free to share whatever's on your mind—I'm here to listen and support you", ChatOwner.BOT, 1),
+            ChatModel(
+                "Hey, I'm your personalized AI therapist. Feel free to share whatever's on your mind—I'm here to listen and support you",
+                ChatOwner.BOT,
+                Calendar.getInstance().timeInMillis
+            ),
         )
     }
 
@@ -22,9 +26,7 @@ class ChatViewModel : ViewModel() {
         if (value.isEmpty()) return
 
         val newUserChat =
-            ChatModel(value.trim(), ChatOwner.USER, Calendar.getInstance().timeInMillis.toInt())
+            ChatModel(value.trim(), ChatOwner.USER, Calendar.getInstance().timeInMillis)
         _chats.value = _chats.value?.plus(newUserChat)
-
     }
-
 }

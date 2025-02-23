@@ -25,4 +25,5 @@
     <string name="message">Message...</string>
     <string name="bot_s_response_here">Bot</string>
     <string name="user_s_message">User</string>
+    <string name="good">Good</string>
 </resources>

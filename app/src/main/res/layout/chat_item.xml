@@ -1,37 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/marginTop"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_12dp"
-
+    <LinearLayout
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/chat_date_bg"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/today"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/user_chat_bg"
         android:gravity="end"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/marginTop">
+        app:layout_constraintTop_toBottomOf="@id/date">
 
         <TextView
             android:id="@+id/userMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
-            android:lineSpacingExtra="4dp"
+            android:lineSpacingExtra="8dp"
             android:maxWidth="280dp"
             android:text="Good"
             android:textColor="#EAEAEA"
@@ -42,6 +55,7 @@
         android:id="@+id/bot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="60dp"
         android:background="@drawable/bot_chat_bg"
         android:gravity="start"
@@ -49,16 +63,16 @@
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/marginTop">
+        app:layout_constraintTop_toBottomOf="@id/date">
 
         <TextView
             android:id="@+id/botResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
-            android:lineSpacingExtra="4dp"
+            android:lineSpacingExtra="8dp"
             android:maxWidth="280dp"
-            android:text="Good"
+            android:text="@string/good"
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>
