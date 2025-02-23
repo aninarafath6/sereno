@@ -14,8 +14,7 @@ class ChatViewModel : ViewModel() {
 
     fun setInitialChats() {
         _chats.value = listOf(
-            ChatModel("Hi!", ChatOwner.BOT, 1),
-            ChatModel("Hello!", ChatOwner.USER, Calendar.getInstance().timeInMillis.toInt()),
+            ChatModel("Hey, I'm your personalized AI therapist. Feel free to share whatever's on your mind—I'm here to listen and support you", ChatOwner.BOT, 1),
         )
     }
 

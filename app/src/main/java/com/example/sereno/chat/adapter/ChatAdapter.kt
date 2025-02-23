@@ -21,7 +21,6 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
             } else {
                 binding.userMessage.text = chat.chat
             }
-            binding.marginTop.isVisible = shouldShowTopMargin(adapterPosition)
         }
     }
 
@@ -34,10 +33,6 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind()
-    }
-
-    private fun shouldShowTopMargin(position: Int): Boolean {
-        return position == 0 || chats[position].owner == chats[position - 1].owner
     }
 
     fun setChats(chats: List<ChatModel>) {

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <View
         android:id="@+id/marginTop"
-        android:layout_width="@dimen/spacing_20dp"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/_12dp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -15,16 +17,14 @@
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
         android:background="@drawable/user_chat_bg"
-        android:layout_marginStart="30dp"
         android:gravity="end"
         android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
-        android:paddingStart="24dp"
-        android:paddingEnd="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/marginTop"
-        app:layout_constraintWidth_percent="0.8">
+        app:layout_constraintTop_toBottomOf="@id/marginTop">
 
         <TextView
             android:id="@+id/userMessage"
@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
             android:lineSpacingExtra="4dp"
-            android:text="@string/bot_s_response_here"
+            android:maxWidth="280dp"
+            android:text="Good"
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>
@@ -41,24 +42,23 @@
         android:id="@+id/bot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="60dp"
         android:background="@drawable/bot_chat_bg"
         android:gravity="start"
-        android:layout_marginEnd="30dp"
         android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/marginTop"
-        app:layout_constraintWidth_percent="0.8">
+        app:layout_constraintTop_toBottomOf="@id/marginTop">
 
         <TextView
             android:id="@+id/botResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
-            android:text="@string/bot_s_response_here"
             android:lineSpacingExtra="4dp"
+            android:maxWidth="280dp"
+            android:text="Good"
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>
