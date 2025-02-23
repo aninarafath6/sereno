@@ -10,12 +10,12 @@ import java.util.Calendar
 class ChatViewModel : ViewModel() {
     private val _chats = MutableLiveData<List<ChatModel>>()
 
-    fun  chats():LiveData<List<ChatModel>> = _chats
+    fun chats(): LiveData<List<ChatModel>> = _chats
 
     fun setInitialChats() {
         _chats.value = listOf(
+            ChatModel("Hi!", ChatOwner.BOT, 1),
             ChatModel("Hello!", ChatOwner.USER, Calendar.getInstance().timeInMillis.toInt()),
-            ChatModel("Hi!", ChatOwner.BOT, 1)
         )
     }
 

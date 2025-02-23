@@ -4,18 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:id="@+id/marginTop"
+        android:layout_width="@dimen/spacing_20dp"
+        android:layout_height="@dimen/_12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/user_chat_bg"
+        android:layout_marginStart="30dp"
         android:gravity="end"
         android:orientation="horizontal"
-        android:paddingHorizontal="24dp"
         android:paddingVertical="8dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/marginTop"
         app:layout_constraintWidth_percent="0.8">
 
         <TextView
@@ -23,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
+            android:lineSpacingExtra="4dp"
             android:text="@string/bot_s_response_here"
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
@@ -34,11 +43,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bot_chat_bg"
         android:gravity="start"
+        android:layout_marginEnd="30dp"
         android:orientation="horizontal"
-        android:paddingHorizontal="24dp"
         android:paddingVertical="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/marginTop"
         app:layout_constraintWidth_percent="0.8">
 
         <TextView
@@ -47,6 +58,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
             android:text="@string/bot_s_response_here"
+            android:lineSpacingExtra="4dp"
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>
