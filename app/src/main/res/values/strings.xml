@@ -22,4 +22,7 @@
     <string name="john_ai_therapist">John - Ai Therapist</string>
     <string name="online">Online</string>
     <string name="call">Call</string>
+    <string name="message">Message...</string>
+    <string name="bot_s_response_here">Bot</string>
+    <string name="user_s_message">User</string>
 </resources>

@@ -5,7 +5,7 @@ import android.view.View
 
 fun View.onClickWithHaptics(onClick: () -> Unit) {
     setOnClickListener {
-        onClick()
+        onClick.invoke()
         it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
     }
 }

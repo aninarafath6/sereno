@@ -47,7 +47,7 @@ class HomeActivity : AppCompatActivity() {
         binding.homeFeelingCard.feeling.onClickWithHaptics {
             showBottomSheet()
         }
-        binding.homeWeekScoreCard.root.onClickWithHaptics { }
+//        binding.homeWeekScoreCard.root.onClickWithHaptics { }
         binding.homeTherapyCard.chat.onClickWithHaptics {
             startActivity(Intent(this, ChatActivity::class.java))
         }

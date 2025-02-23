@@ -43,9 +43,9 @@
                     android:id="@+id/homeFeelingCard"
                     layout="@layout/home_feeling_card" />
 
-                <include
-                    android:id="@+id/homeWeekScoreCard"
-                    layout="@layout/home_week_mood_score_card" />
+<!--                <include-->
+<!--                    android:id="@+id/homeWeekScoreCard"-->
+<!--                    layout="@layout/home_week_mood_score_card" />-->
 
                 <include
                     android:id="@+id/homeTherapyCard"

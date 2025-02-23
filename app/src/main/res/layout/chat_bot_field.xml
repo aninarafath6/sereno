@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/input_box_bg"
+        android:gravity="center"
+        android:minHeight="52dp"
+        android:paddingVertical="4dp"
+        android:paddingHorizontal="12dp">
+
+        <EditText
+            android:id="@+id/et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/message"
+            android:inputType="textMultiLine"
+            android:maxLines="10"
+            android:paddingHorizontal="12dp"
+            android:textColor="@color/white"
+            android:textColorHint="#99FFFFFF" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sendButton"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/send_button_bg"
+        android:gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="@dimen/spacing_24dp"
+            android:layout_height="@dimen/spacing_24dp"
+            android:src="@drawable/ic_send" />
+    </LinearLayout>
+</LinearLayout>
