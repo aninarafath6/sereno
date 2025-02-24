@@ -2,7 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     kotlin("plugin.serialization") version "1.9.24"
+    id ("kotlin-kapt")
+    id ("dagger.hilt.android.plugin")
 }
+
 
 android {
     namespace = "com.example.sereno"
@@ -37,6 +40,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
 }
 
 
@@ -52,15 +56,29 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
-    implementation (libs.googleid)
-    implementation (libs.androidx.lifecycle.viewmodel.compose)
-    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.googleid)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(platform("io.github.jan-tennert.supabase:bom:3.1.1"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("io.ktor:ktor-client-android:3.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.kotlinxCoroutines}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${libs.versions.kotlinxCoroutines}")
     implementation("com.google.android.material:material:1.12.0")
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.android.volley:volley:1.2.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.moshi:moshi:1.12.0")
+    implementation("io.github.jan-tennert.supabase:serializer-moshi:3.0.3")
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:$roomVersion")
+
+    //Dagger - Hilt
+    implementation ("com.google.dagger:hilt-android:2.40.5")
+    kapt ("com.google.dagger:hilt-android-compiler:2.40.5")
+    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt ("androidx.hilt:hilt-compiler:1.0.0")
 
 }

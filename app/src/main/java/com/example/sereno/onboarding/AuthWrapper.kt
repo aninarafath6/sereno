@@ -12,9 +12,11 @@ import com.example.sereno.common.supabase.SupabaseManager
 import com.example.sereno.databinding.ActivityAuthWrapperBinding
 import com.example.sereno.home.HomeActivity
 import com.example.sereno.onboarding.views.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class AuthWrapper : AppCompatActivity() {
     private lateinit var binding: ActivityAuthWrapperBinding
 

@@ -4,23 +4,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sereno.chat.model.ChatModel
-import com.example.sereno.chat.model.ChatOwner
+import com.example.sereno.chat.model.Chat
 import com.example.sereno.databinding.ChatItemBinding
 import java.util.Calendar
 
 class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
-    private val chats = mutableListOf<ChatModel>()
+    private val chats = mutableListOf<Chat>()
 
     inner class VH(private val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             val chat = chats[adapterPosition]
-            binding.bot.isVisible = chat.owner == ChatOwner.BOT
-            binding.user.isVisible = chat.owner == ChatOwner.USER
-            if (chat.owner == ChatOwner.BOT) {
-                binding.botResponse.text = chat.chat
+            binding.bot.isVisible = chat.isBot
+            binding.user.isVisible = !chat.isBot
+            if (chat.isBot) {
+                binding.botResponse.text = chat.message
             } else {
-                binding.userMessage.text = chat.chat
+                binding.userMessage.text = chat.message
             }
             binding.date.isVisible = shouldShowDate(adapterPosition)
         }
@@ -44,19 +43,24 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
         val previousChat = chats[position - 1]
 
         val currentCalendar = Calendar.getInstance().apply {
-            timeInMillis = currentChat.dateEpoch
+            timeInMillis = currentChat.createdAt
         }
         val previousCalendar = Calendar.getInstance().apply {
-            timeInMillis = previousChat.dateEpoch
+            timeInMillis = previousChat.createdAt
         }
 
         return currentCalendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
                 currentCalendar.get(Calendar.DAY_OF_YEAR) != previousCalendar.get(Calendar.DAY_OF_YEAR)
     }
 
-    fun setChats(chats: List<ChatModel>) {
+    fun setChats(chats: List<Chat>) {
         this.chats.clear()
         this.chats.addAll(chats)
         notifyDataSetChanged()
+    }
+
+    fun addChat(chat: Chat) {
+        chats.add(chat)
+        notifyItemInserted(chats.size - 1)
     }
 }

@@ -5,12 +5,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
 import com.example.sereno.chat.adapter.ChatAdapter
+import com.example.sereno.chat.events.ChatEvent
 import com.example.sereno.chat.view_model.ChatViewModel
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityChatBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
@@ -44,13 +48,21 @@ class ChatActivity : AppCompatActivity() {
     private fun initChats() {
         binding.chats.adapter = chatAdapter
         binding.chats.layoutManager = LinearLayoutManager(this)
-        vm.setInitialChats()
+        vm.onEvent(this, ChatEvent.LoadChats)
     }
 
     private fun initObservers() {
-        vm.chats().observe(this) {
-            chatAdapter.setChats(it)
-            binding.chats.scrollToPosition(it.size - 1)
+        lifecycleScope.launch {
+            vm.chats.collectLatest {
+                if (it.consumeWhole) {
+                    chatAdapter.setChats(it.chats)
+                } else {
+                    chatAdapter.addChat(it.chats.last())
+                }
+            }
+        }
+        vm.isLoading.observe(this) {
+            binding.heading.online.text = if (it) "Typing" else "Online"
         }
     }
 
@@ -70,7 +82,8 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        vm.sendMessage(binding.field.et.text.toString())
+        val composedMessage = binding.field.et.text.toString()
+        vm.onEvent(this, ChatEvent.SendMessage(composedMessage))
         binding.field.et.text.clear()
     }
 }

@@ -7,6 +7,7 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.serializer.MoshiSerializer
 
 object SupabaseManager {
     private lateinit var supabaseClient: SupabaseClient
@@ -17,6 +18,7 @@ object SupabaseManager {
         ) {
             install(Postgrest)
             install(Auth)
+            defaultSerializer = MoshiSerializer()
         }
     }
 
@@ -28,6 +30,10 @@ object SupabaseManager {
             nonce = rawNonce
 
         }
+    }
+
+    fun getClient(): SupabaseClient {
+        return supabaseClient
     }
 
     suspend fun isUserAuthenticated(): Boolean {
