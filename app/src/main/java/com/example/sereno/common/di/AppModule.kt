@@ -1,17 +1,39 @@
 package com.example.sereno.common.di
 
+import android.content.Context
+import androidx.room.Room
 import com.example.sereno.chat.repo.GroqRepo
+import com.example.sereno.chat.repo.room.ChatsDao
+import com.example.sereno.chat.repo.room.ChatsDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Provides
     fun provideGroqRepo(): GroqRepo {
         return GroqRepo()
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatsDatabase(@ApplicationContext application: Context): ChatsDatabase {
+        return Room.databaseBuilder(
+            application,
+            ChatsDatabase::class.java,
+            ChatsDatabase.CHATS_DB
+        ).fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    fun provideChatsDao(chatsDatabase: ChatsDatabase): ChatsDao {
+        return chatsDatabase.dao
     }
 }

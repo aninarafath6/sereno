@@ -1,6 +1,5 @@
 package com.example.sereno.chat.view_model
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,15 +14,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val dao: ChatsDao,
-    private val groqRepo: GroqRepo
+    private val groqRepo: GroqRepo,
+    private val dao: ChatsDao
 ) : ViewModel() {
 
     private val _chats = MutableStateFlow(ChatState())
@@ -32,7 +30,7 @@ class ChatViewModel @Inject constructor(
     val chats: StateFlow<ChatState> = _chats
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun onEvent(context: Context, event: ChatEvent) {
+    fun onEvent(event: ChatEvent) {
         viewModelScope.launch {
             when (event) {
                 is ChatEvent.BotResponded -> handleBotResponse(event)
@@ -45,7 +43,6 @@ class ChatViewModel @Inject constructor(
     private suspend fun sendMessage(event: ChatEvent.SendMessage) {
         _isLoading.value = true
         withContext(Dispatchers.IO) {
-
             val chatMessage = when (val chatResponse = groqRepo.chat(event.message)) {
                 is ChatResponse.Failed -> "Sorry, I'm not able to respond to that."
                 is ChatResponse.Success -> chatResponse.response

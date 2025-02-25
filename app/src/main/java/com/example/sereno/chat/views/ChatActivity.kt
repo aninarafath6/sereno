@@ -48,7 +48,7 @@ class ChatActivity : AppCompatActivity() {
     private fun initChats() {
         binding.chats.adapter = chatAdapter
         binding.chats.layoutManager = LinearLayoutManager(this)
-        vm.onEvent(this, ChatEvent.LoadChats)
+        vm.onEvent(ChatEvent.LoadChats)
     }
 
     private fun initObservers() {
@@ -57,7 +57,7 @@ class ChatActivity : AppCompatActivity() {
                 if (it.consumeWhole) {
                     chatAdapter.setChats(it.chats)
                 } else {
-                    chatAdapter.addChat(it.chats.last())
+//                    chatAdapter.addChat(it.chats.last())
                 }
             }
         }
@@ -83,7 +83,7 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendMessage() {
         val composedMessage = binding.field.et.text.toString()
-        vm.onEvent(this, ChatEvent.SendMessage(composedMessage))
+        vm.onEvent(ChatEvent.SendMessage(composedMessage))
         binding.field.et.text.clear()
     }
 }

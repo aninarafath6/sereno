@@ -10,11 +10,12 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import org.json.JSONObject
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-class GroqRepo {
+class GroqRepo @Inject constructor() {
     companion object {
         private var GROQ_API_KEY = "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"
         private var GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
