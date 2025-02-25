@@ -22,6 +22,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
                 binding.userMessage.text = chat.message
             }
             binding.date.isVisible = shouldShowDate(adapterPosition)
+            binding.extraMargin.isVisible = shouldShowDate(adapterPosition)
         }
     }
 

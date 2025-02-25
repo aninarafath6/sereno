@@ -25,6 +25,14 @@
             android:textColor="@color/white" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/extraMargin"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/date" />
+
     <LinearLayout
         android:id="@+id/user"
         android:layout_width="wrap_content"
@@ -37,7 +45,7 @@
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/date">
+        app:layout_constraintTop_toBottomOf="@id/extraMargin">
 
         <TextView
             android:id="@+id/userMessage"
@@ -63,7 +71,7 @@
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/date">
+        app:layout_constraintTop_toBottomOf="@id/extraMargin">
 
         <TextView
             android:id="@+id/botResponse"

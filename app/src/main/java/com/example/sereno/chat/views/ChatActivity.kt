@@ -13,13 +13,16 @@ import com.example.sereno.chat.events.ChatEvent
 import com.example.sereno.chat.view_model.ChatViewModel
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityChatBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private val vm: ChatViewModel by viewModels()
     private val chatAdapter = ChatAdapter()
+    private var isKeyboardVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +60,12 @@ class ChatActivity : AppCompatActivity() {
                 if (it.consumeWhole) {
                     chatAdapter.setChats(it.chats)
                 } else {
-//                    chatAdapter.addChat(it.chats.last())
+                    chatAdapter.addChat(it.chats.lastOrNull() ?: return@collectLatest)
                 }
+                scrollToBottom()
             }
         }
+
         vm.isLoading.observe(this) {
             binding.heading.online.text = if (it) "Typing" else "Online"
         }
@@ -85,5 +90,15 @@ class ChatActivity : AppCompatActivity() {
         val composedMessage = binding.field.et.text.toString()
         vm.onEvent(ChatEvent.SendMessage(composedMessage))
         binding.field.et.text.clear()
+    }
+
+    private fun scrollToBottom() {
+        binding.chats.scrollToPosition(chatAdapter.itemCount - 1)
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.root.viewTreeObserver.removeOnGlobalLayoutListener { }
     }
 }

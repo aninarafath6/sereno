@@ -31,56 +31,70 @@ class ChatViewModel @Inject constructor(
     val isLoading: LiveData<Boolean> = _isLoading
 
     fun onEvent(event: ChatEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is ChatEvent.BotResponded -> handleBotResponse(event)
-                ChatEvent.LoadChats -> loadChats()
-                is ChatEvent.SendMessage -> sendMessage(event)
-            }
+        when (event) {
+            is ChatEvent.BotResponded -> handleBotResponse(event)
+            ChatEvent.LoadChats -> loadChats()
+            is ChatEvent.SendMessage -> sendMessage(event)
         }
     }
 
-    private suspend fun sendMessage(event: ChatEvent.SendMessage) {
-        _isLoading.value = true
-        withContext(Dispatchers.IO) {
-            val chatMessage = when (val chatResponse = groqRepo.chat(event.message)) {
-                is ChatResponse.Failed -> "Sorry, I'm not able to respond to that."
-                is ChatResponse.Success -> chatResponse.response
-            }
-
-            val chat = Chat(
-                message = chatMessage,
+    private fun sendMessage(event: ChatEvent.SendMessage) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val userChat = Chat(
+                message = event.message,
                 isBot = false,
                 createdAt = System.currentTimeMillis()
             )
-            // Todo: Handle exceptions, like what if user has no enough space to store the chat, etc..
-            saveAndUpdateChat(chat)
-
+            saveAndUpdateChat(userChat) // show user chat and save it to db
+            withContext(Dispatchers.IO) {
+                val chatMessage = when (val chatResponse = groqRepo.chat(event.message)) {
+                    is ChatResponse.Failed -> "Sorry, I'm not able to respond to that."
+                    is ChatResponse.Success -> chatResponse.response
+                }
+                onEvent(ChatEvent.BotResponded(chatMessage))
+            }
+            _isLoading.value = false
         }
-        _isLoading.value = false
     }
 
-    private suspend fun loadChats() {
-        val chats = withContext(Dispatchers.IO) {
-            dao.getChats()
-        }.value ?: emptyList()
-        _chats.value = ChatState(chats, consumeWhole = true)
+    private fun loadChats() {
+        viewModelScope.launch {
+            val chats = withContext(Dispatchers.IO) { dao.getChats() }
+            _chats.value = ChatState(chats, consumeWhole = true)
+
+            if (chats.isEmpty()) {
+                saveAndUpdateChat(NEW_BOT_CHAT)
+            }
+        }
     }
 
-    private suspend fun handleBotResponse(botResponse: ChatEvent.BotResponded) {
-        val botChat = Chat(
-            message = botResponse.message,
-            isBot = true,
-            createdAt = System.currentTimeMillis()
-        )
-        saveAndUpdateChat(botChat)
+    private fun handleBotResponse(botResponse: ChatEvent.BotResponded) {
+        viewModelScope.launch {
+            val botChat = Chat(
+                message = botResponse.message,
+                isBot = true,
+                createdAt = System.currentTimeMillis()
+            )
+            saveAndUpdateChat(botChat)
+        }
     }
 
     private suspend fun saveAndUpdateChat(chat: Chat) {
+        // Todo: Handle exceptions, like what if user has no enough space to store the chat, etc..
         withContext(Dispatchers.IO) {
             dao.saveChat(chat)
         }
         _chats.value = _chats.value.copy(chats = _chats.value.chats + chat, consumeWhole = false)
+    }
+
+
+    companion object {
+        private val NEW_BOT_CHAT = Chat(
+            message = "Hello, I'm Sereno. How can I help you?",
+            isBot = true,
+            createdAt = System.currentTimeMillis()
+        )
     }
 }
 

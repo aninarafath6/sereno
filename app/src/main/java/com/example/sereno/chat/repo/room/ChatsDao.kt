@@ -1,6 +1,5 @@
 package com.example.sereno.chat.repo.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -13,5 +12,5 @@ interface ChatsDao {
     suspend fun saveChat(chat: Chat)
 
     @Query("SELECT * FROM $CHATS_TABLE")
-    fun getChats(): LiveData<List<Chat>>
+    fun getChats(): List<Chat>
 }
