@@ -24,7 +24,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
             val prevChat = chats.getOrNull(adapterPosition - 1)
             var replayChat: Chat? = null
             Log.d("ChatAdapter", "id c: ${prevChat?.id} id prev: ${chat.id}")
-            if (chat.replayChatId != prevChat?.id) {
+            if (chat.replayChatId != null) {
                 replayChat = chats.find { it.id == chat.replayChatId }
             }
 
@@ -72,5 +72,13 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
     fun addChat(chat: Chat) {
         chats.add(chat)
         notifyItemInserted(chats.size - 1)
+    }
+
+    fun isBot(position: Int): Boolean {
+        return chats.getOrNull(position)?.isBot ?: false
+    }
+
+    fun getChat(position: Int):Chat?{
+        return chats.getOrNull(position)
     }
 }

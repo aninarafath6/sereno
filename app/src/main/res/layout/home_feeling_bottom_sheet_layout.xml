@@ -12,7 +12,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <ImageView
             android:id="@+id/close"
             android:layout_width="24dp"
@@ -46,6 +45,7 @@
         android:id="@+id/continueButton"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
         app:text="@string/continue_new" />
 </LinearLayout>

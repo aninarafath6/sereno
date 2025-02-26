@@ -25,10 +25,15 @@ class ChatItem @JvmOverloads constructor(
     companion object {
         private const val USER = 0
         private const val BOT = 1
+
+        fun getReplayToString(isBot: Boolean): String {
+            return if (isBot) "John- Ai Therapist" else "You"
+        }
     }
 
     init {
-        val styles = context.obtainStyledAttributes(attrs, R.styleable.ChatType, defaultStyleAttr, 0)
+        val styles =
+            context.obtainStyledAttributes(attrs, R.styleable.ChatType, defaultStyleAttr, 0)
         chatOwner = styles.getInt(R.styleable.ChatType_owner, USER)
         Log.d("ChatItem", "Chat owner: $chatOwner")
         setBackground()
@@ -43,6 +48,7 @@ class ChatItem @JvmOverloads constructor(
         binding.replayContainer.isVisible = replayChat != null
         binding.extraMargin.isVisible = replayChat != null
         binding.replay.text = replayChat?.message
+        binding.replayTo.text = getReplayToString(replayChat?.isBot==true)
 
     }
 

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="end"
     app:layout_anchorGravity="end"
+    android:background="@drawable/bot_chat_bg"
     android:paddingHorizontal="12dp"
     android:paddingVertical="8dp">
 
@@ -24,10 +25,25 @@
 
         <LinearLayout
             android:id="@+id/replayBg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/bot_replay_bg"
+            android:orientation="vertical"
             android:paddingHorizontal="8dp">
+            <TextView
+                android:id="@+id/replayTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:ellipsize="end"
+                android:textStyle="bold"
+                android:fontFamily="@font/helvetica"
+                android:lineSpacingExtra="8dp"
+                android:maxLines="2"
+                android:paddingTop="6dp"
+                android:text="You"
+                android:textColor="#EAEAEA"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/replay"
@@ -38,7 +54,7 @@
                 android:fontFamily="@font/helvetica"
                 android:lineSpacingExtra="8dp"
                 android:maxLines="2"
-                android:paddingVertical="6dp"
+                android:paddingBottom="6dp"
                 android:text="Reference"
                 android:textColor="#EAEAEA"
                 android:textSize="14sp" />

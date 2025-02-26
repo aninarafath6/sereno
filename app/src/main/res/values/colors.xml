@@ -6,4 +6,8 @@
     <color name="primary">#050E17</color>
     <color name="transparent">#00000000</color>
     <color name="on_container">#0A89B3</color>
+    <color name="chat_border_color">#1AFFFFFF</color>
+    <color name="bot_chat_bg">#04192E</color>
+    <color name="replay_strip">#094B61</color>
+    <color name="bot_strip_g">#01264B</color>
 </resources>

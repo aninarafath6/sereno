@@ -26,15 +26,18 @@ class ChatViewModel @Inject constructor(
 
     private val _chats = MutableStateFlow(ChatState())
     private val _isLoading = MutableLiveData(false)
+    private val _selectedChat = MutableLiveData<Chat?>()
 
     val chats: StateFlow<ChatState> = _chats
     val isLoading: LiveData<Boolean> = _isLoading
+    val selectedChat: LiveData<Chat?> = _selectedChat
 
     fun onEvent(event: ChatEvent) {
         when (event) {
             is ChatEvent.BotResponded -> handleBotResponse(event)
             ChatEvent.LoadChats -> loadChats()
             is ChatEvent.SendMessage -> sendMessage(event)
+            is ChatEvent.SwipeToReplay -> {}
         }
     }
 
@@ -45,6 +48,7 @@ class ChatViewModel @Inject constructor(
             _isLoading.value = true
             val userChat = Chat(
                 message = event.message.trim(),
+                replayChatId = _selectedChat.value?.id,
                 isBot = false,
                 createdAt = System.currentTimeMillis()
             )
@@ -56,6 +60,7 @@ class ChatViewModel @Inject constructor(
                 }
                 onEvent(ChatEvent.BotResponded(chatMessage, replayChat = userChat.id))
             }
+            _selectedChat.value = null
             _isLoading.value = false
         }
     }
@@ -91,6 +96,9 @@ class ChatViewModel @Inject constructor(
         _chats.value = _chats.value.copy(chats = _chats.value.chats + chat, consumeWhole = false)
     }
 
+    fun setSwipedChat(chat: Chat?) {
+        _selectedChat.value = chat
+    }
 
     companion object {
         private val NEW_BOT_CHAT = Chat(
