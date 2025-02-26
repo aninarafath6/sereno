@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/user"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="end"
-    app:layout_anchorGravity="end"
     android:background="@drawable/bot_chat_bg"
+    android:orientation="vertical"
     android:paddingHorizontal="12dp"
-    android:paddingVertical="8dp">
+    android:paddingVertical="8dp"
+    app:layout_anchorGravity="end">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/replayContainer"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
+        android:layout_marginBottom="4dp"
         android:elevation="0dp"
-        app:contentPadding="0dp"
-        app:cardBackgroundColor="@color/transparent"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,49 +24,40 @@
 
         <LinearLayout
             android:id="@+id/replayBg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bot_replay_bg"
             android:orientation="vertical"
-            android:paddingHorizontal="8dp">
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp">
+
             <TextView
                 android:id="@+id/replayTo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:ellipsize="end"
-                android:textStyle="bold"
                 android:fontFamily="@font/helvetica"
                 android:lineSpacingExtra="8dp"
                 android:maxLines="2"
-                android:paddingTop="6dp"
                 android:text="You"
                 android:textColor="#EAEAEA"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/replay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/helvetica"
                 android:lineSpacingExtra="8dp"
                 android:maxLines="2"
-                android:paddingBottom="6dp"
-                android:text="Reference"
+                android:text="wh afd  adf adf  afadfadf adf adf adsf"
                 android:textColor="#EAEAEA"
                 android:textSize="14sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <View
-        android:id="@+id/extraMargin"
-        android:layout_width="wrap_content"
-        android:layout_height="4dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/replayContainer" />
 
     <LinearLayout
         android:id="@+id/chatContainer"
@@ -75,16 +65,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/extraMargin">
+        app:layout_constraintTop_toBottomOf="@id/replayContainer">
+
         <TextView
             android:id="@+id/response"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
             android:lineSpacingExtra="8dp"
-            android:text="actual message"
+            android:text="hmm d adf as fa sdfas dfa sf df f asdf  saf saf  adf ad ff saf asd  "
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -13,7 +13,6 @@ data class Chat(
     val isNewChat: Boolean = true,
     val isSynced: Boolean = false,
     val replayChatId: String? = null,
-    val explicitMention: Boolean = false,
     val createdAt: Long,
     val isContextRelevant: Boolean = true,
     @PrimaryKey(autoGenerate = false)

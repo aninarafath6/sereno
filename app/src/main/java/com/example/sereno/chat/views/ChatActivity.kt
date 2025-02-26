@@ -67,10 +67,20 @@ class ChatActivity : AppCompatActivity() {
         binding.chats.adapter = chatAdapter
         binding.chats.layoutManager = LinearLayoutManager(this)
         vm.onEvent(ChatEvent.LoadChats)
+        binding.chats.setRecycledViewPool(null)
+        chatAdapter.setScrollToPositionListener { position, smoothScroll ->
+
+            if (smoothScroll) {
+                binding.chats.smoothScrollToPosition(position)
+            } else {
+                binding.chats.scrollToPosition(position)
+            }
+            chatAdapter.blinkItemAtPos(position)
+        }
 
         val itemTouchHelper =
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-                private val swipeThreshold = 50f * Resources.getSystem().displayMetrics.density
+                private val swipeThreshold = 40f * Resources.getSystem().displayMetrics.density
 
                 override fun getMovementFlags(
                     recyclerView: RecyclerView,
@@ -96,17 +106,9 @@ class ChatActivity : AppCompatActivity() {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
                     if (position == RecyclerView.NO_POSITION) return
-                    val isBotMessage = chatAdapter.isBot(position)
-
-                    if (
-                        (isBotMessage && direction == ItemTouchHelper.RIGHT)
-                        || (!isBotMessage && direction == ItemTouchHelper.LEFT)
-                    ) {
-                        binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                        val chat = chatAdapter.getChat(position)
-                        vm.setSwipedChat(chat)
-                    }
-
+                    binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    val chat = chatAdapter.getChat(position)
+                    vm.setSwipedChat(chat)
                     binding.chats.adapter?.notifyItemChanged(position)
                 }
 
@@ -121,6 +123,9 @@ class ChatActivity : AppCompatActivity() {
                     val clampedDx =
                         if (isBotMessage) min(dX, swipeThreshold) else max(dX, -swipeThreshold)
 
+                    if (!isCurrentlyActive && abs(dX) > swipeThreshold) {
+                        viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
+                    }
 
                     super.onChildDraw(
                         c,
@@ -131,14 +136,10 @@ class ChatActivity : AppCompatActivity() {
                         actionState,
                         isCurrentlyActive
                     )
-
-                    if (!isCurrentlyActive && abs(dX) > swipeThreshold) {
-                        viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
-                    }
                 }
 
                 override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-                    return swipeThreshold
+                    return .1f
                 }
 
                 override fun clearView(
@@ -193,7 +194,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendMessage(view:View) {
+    private fun sendMessage(view: View) {
         binding.chats.scrollToPosition(chatAdapter.itemCount - 1)
         val composedMessage = binding.field.et.text.toString()
         vm.onEvent(ChatEvent.SendMessage(composedMessage))

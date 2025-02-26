@@ -1,37 +1,64 @@
 package com.example.sereno.chat.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.chat.model.Chat
+import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ChatItemBinding
 import java.util.Calendar
 
 class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
     private val chats = mutableListOf<Chat>()
-
+    private var scrollToPosition: ((position: Int, smoothScroll: Boolean) -> Unit)? = null
+    private var blinkAtPosition: Int? = null
 
     inner class VH(private val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             val chat = chats[adapterPosition]
             binding.user.isVisible = !chat.isBot
             binding.bot.isVisible = chat.isBot
-            binding.date.isVisible = shouldShowDate(adapterPosition)
-            binding.extraMargin.isVisible = false
 
-            val prevChat = chats.getOrNull(adapterPosition - 1)
             var replayChat: Chat? = null
-            Log.d("ChatAdapter", "id c: ${prevChat?.id} id prev: ${chat.id}")
-            if (chat.replayChatId != null) {
+            val prevChat = chats.getOrNull(adapterPosition - 1)
+
+            if (shouldShowReplaySection(chat, prevChat)) {
                 replayChat = chats.find { it.id == chat.replayChatId }
+            }
+            if (adapterPosition == blinkAtPosition) {
+                binding.user.startBlinkAnimation()
+                binding.bot.startBlinkAnimation()
+                blinkAtPosition = null
             }
 
             binding.user.setChatText(chat, replayChat)
             binding.bot.setChatText(chat, replayChat)
+            if (replayChat != null) {
+                binding.user.onClickWithHaptics {
+                    scrollToMentionedChat(chat)
+                }
+                binding.bot.onClickWithHaptics {
+                    scrollToMentionedChat(chat)
+                }
+            }
         }
     }
+
+    private fun scrollToMentionedChat(chat: Chat) {
+        if (chat.replayChatId == null) return
+        val index = chats.indexOfFirst { it.id == chat.replayChatId }
+        scrollToPosition?.invoke(index, true)
+    }
+
+
+    private fun shouldShowReplaySection(chat: Chat, prevChat: Chat?): Boolean {
+        if (chat.replayChatId == null) return false
+        if (chat.replayChatId == prevChat?.id && !prevChat.isBot) return false
+
+        return true
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding =
@@ -78,7 +105,16 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
         return chats.getOrNull(position)?.isBot ?: false
     }
 
-    fun getChat(position: Int):Chat?{
+    fun getChat(position: Int): Chat? {
         return chats.getOrNull(position)
+    }
+
+    fun setScrollToPositionListener(listener: (position: Int, smoothScroll: Boolean) -> Unit) {
+        scrollToPosition = listener
+    }
+
+    fun blinkItemAtPos(pos:Int){
+        blinkAtPosition = pos
+        notifyItemChanged(pos)
     }
 }
