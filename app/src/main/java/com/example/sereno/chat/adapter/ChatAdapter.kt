@@ -11,18 +11,16 @@ import java.util.Calendar
 class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
     private val chats = mutableListOf<Chat>()
 
+
     inner class VH(private val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             val chat = chats[adapterPosition]
-            binding.bot.isVisible = chat.isBot
             binding.user.isVisible = !chat.isBot
-            if (chat.isBot) {
-                binding.botResponse.text = chat.message
-            } else {
-                binding.userMessage.text = chat.message
-            }
+            binding.bot.isVisible = chat.isBot
+            binding.user.setChatText(chat)
+            binding.bot.setChatText(chat)
             binding.date.isVisible = shouldShowDate(adapterPosition)
-            binding.extraMargin.isVisible = shouldShowDate(adapterPosition)
+            binding.extraMargin.isVisible = false
         }
     }
 
@@ -53,6 +51,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
         return currentCalendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
                 currentCalendar.get(Calendar.DAY_OF_YEAR) != previousCalendar.get(Calendar.DAY_OF_YEAR)
     }
+
 
     fun setChats(chats: List<Chat>) {
         this.chats.clear()

@@ -27,12 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingHorizontal="@dimen/spacing_24dp"
-            android:paddingBottom="12dp"
+            android:paddingBottom="18dp"
             app:layout_constraintBottom_toTopOf="@id/field"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/chat_item"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/heading" />
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            tools:listitem="@layout/chat_item" />
 
         <include
             android:id="@+id/field"
@@ -46,5 +46,4 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </LinearLayout>

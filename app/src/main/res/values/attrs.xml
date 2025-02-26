@@ -9,4 +9,11 @@
             <enum name="normal" value="1" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="ChatType">
+        <attr name="owner" format="enum">
+            <enum name="user" value="0" />
+            <enum name="bot" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>

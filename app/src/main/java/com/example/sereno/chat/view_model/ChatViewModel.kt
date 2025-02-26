@@ -39,16 +39,18 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun sendMessage(event: ChatEvent.SendMessage) {
+        if (event.message.trim().isBlank()) return
+
         viewModelScope.launch {
             _isLoading.value = true
             val userChat = Chat(
-                message = event.message,
+                message = event.message.trim(),
                 isBot = false,
                 createdAt = System.currentTimeMillis()
             )
             saveAndUpdateChat(userChat) // show user chat and save it to db
             withContext(Dispatchers.IO) {
-                val chatMessage = when (val chatResponse = groqRepo.chat(event.message)) {
+                val chatMessage = when (val chatResponse = groqRepo.chat(userChat.message)) {
                     is ChatResponse.Failed -> "Sorry, I'm not able to respond to that."
                     is ChatResponse.Success -> chatResponse.response
                 }

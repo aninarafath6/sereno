@@ -33,56 +33,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/date" />
 
-    <LinearLayout
+
+    <com.example.sereno.chat.views.ChatItem
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/user_chat_bg"
         android:gravity="end"
-        android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
+        app:owner="user"
+        android:orientation="vertical"
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/extraMargin">
+        app:layout_constraintTop_toBottomOf="@id/extraMargin" />
 
-        <TextView
-            android:id="@+id/userMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/helvetica"
-            android:lineSpacingExtra="8dp"
-            android:maxWidth="280dp"
-            android:text="Good"
-            android:textColor="#EAEAEA"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <LinearLayout
+    <com.example.sereno.chat.views.ChatItem
         android:id="@+id/bot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="60dp"
-        android:background="@drawable/bot_chat_bg"
         android:gravity="start"
+        app:owner="bot"
         android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/extraMargin">
-
-        <TextView
-            android:id="@+id/botResponse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/helvetica"
-            android:lineSpacingExtra="8dp"
-            android:maxWidth="280dp"
-            android:text="@string/good"
-            android:textColor="#EAEAEA"
-            android:textSize="16sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/extraMargin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

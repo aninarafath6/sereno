@@ -22,7 +22,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private val vm: ChatViewModel by viewModels()
     private val chatAdapter = ChatAdapter()
-    private var isKeyboardVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
