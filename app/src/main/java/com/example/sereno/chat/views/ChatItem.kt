@@ -1,14 +1,18 @@
 package com.example.sereno.chat.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isVisible
 import com.example.sereno.R
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.databinding.ChatBinding
 
+@SuppressLint("CustomViewStyleable")
 class ChatItem @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -24,18 +28,22 @@ class ChatItem @JvmOverloads constructor(
     }
 
     init {
-        val styles =
-            context.obtainStyledAttributes(attrs, R.styleable.ChatType, defaultStyleAttr, 0)
+        val styles = context.obtainStyledAttributes(attrs, R.styleable.ChatType, defaultStyleAttr, 0)
         chatOwner = styles.getInt(R.styleable.ChatType_owner, USER)
+        Log.d("ChatItem", "Chat owner: $chatOwner")
         setBackground()
         styles.recycle()
     }
 
-    fun setChatText(chat: Chat) {
+    fun setChatText(chat: Chat, replayChat: Chat? = null) {
         binding.response.text = chat.message
         binding.replayContainer.post {
             adjustReplayContainerConstraints()
         }
+        binding.replayContainer.isVisible = replayChat != null
+        binding.extraMargin.isVisible = replayChat != null
+        binding.replay.text = replayChat?.message
+
     }
 
     private fun setBackground() {
@@ -44,12 +52,14 @@ class ChatItem @JvmOverloads constructor(
         } else {
             R.drawable.user_chat_bg
         }
+
         val replayBackground = if (chatOwner == BOT) {
             R.drawable.bot_replay_bg
         } else {
             R.drawable.user_replay_bg
         }
 
+        binding.root.background = null
         binding.root.setBackgroundResource(background)
         binding.replayBg.setBackgroundResource(replayBackground)
     }

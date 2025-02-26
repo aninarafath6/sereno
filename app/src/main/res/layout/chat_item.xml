@@ -34,30 +34,41 @@
         app:layout_constraintTop_toBottomOf="@id/date" />
 
 
-    <com.example.sereno.chat.views.ChatItem
-        android:id="@+id/user"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="12dp"
         android:gravity="end"
-        app:owner="user"
-        android:orientation="vertical"
-        android:paddingVertical="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/extraMargin" />
+        app:layout_constraintTop_toBottomOf="@id/extraMargin">
 
-    <com.example.sereno.chat.views.ChatItem
-        android:id="@+id/bot"
-        android:layout_width="wrap_content"
+        <com.example.sereno.chat.views.ChatItem
+            android:id="@+id/user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            app:owner="user" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginEnd="100dp"
         android:gravity="start"
-        app:owner="bot"
         android:orientation="horizontal"
-        android:paddingVertical="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/extraMargin" />
+        app:layout_constraintTop_toBottomOf="@id/extraMargin">
+        <com.example.sereno.chat.views.ChatItem
+            android:id="@+id/bot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            app:owner="bot" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

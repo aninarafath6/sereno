@@ -48,13 +48,13 @@ class ChatViewModel @Inject constructor(
                 isBot = false,
                 createdAt = System.currentTimeMillis()
             )
-            saveAndUpdateChat(userChat) // show user chat and save it to db
+            saveAndUpdateChat(userChat)
             withContext(Dispatchers.IO) {
                 val chatMessage = when (val chatResponse = groqRepo.chat(userChat.message)) {
                     is ChatResponse.Failed -> "Sorry, I'm not able to respond to that."
                     is ChatResponse.Success -> chatResponse.response
                 }
-                onEvent(ChatEvent.BotResponded(chatMessage))
+                onEvent(ChatEvent.BotResponded(chatMessage, replayChat = userChat.id))
             }
             _isLoading.value = false
         }
@@ -75,6 +75,7 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             val botChat = Chat(
                 message = botResponse.message,
+                replayChatId = botResponse.replayChat,
                 isBot = true,
                 createdAt = System.currentTimeMillis()
             )

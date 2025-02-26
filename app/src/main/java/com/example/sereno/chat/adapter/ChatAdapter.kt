@@ -1,5 +1,6 @@
 package com.example.sereno.chat.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -17,15 +18,24 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
             val chat = chats[adapterPosition]
             binding.user.isVisible = !chat.isBot
             binding.bot.isVisible = chat.isBot
-            binding.user.setChatText(chat)
-            binding.bot.setChatText(chat)
             binding.date.isVisible = shouldShowDate(adapterPosition)
             binding.extraMargin.isVisible = false
+
+            val prevChat = chats.getOrNull(adapterPosition - 1)
+            var replayChat: Chat? = null
+            Log.d("ChatAdapter", "id c: ${prevChat?.id} id prev: ${chat.id}")
+            if (chat.replayChatId != prevChat?.id) {
+                replayChat = chats.find { it.id == chat.replayChatId }
+            }
+
+            binding.user.setChatText(chat, replayChat)
+            binding.bot.setChatText(chat, replayChat)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val binding = ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ChatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return VH(binding)
     }
 

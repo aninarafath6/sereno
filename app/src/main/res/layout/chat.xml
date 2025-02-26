@@ -4,7 +4,8 @@
     android:id="@+id/user"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/bot_chat_bg"
+    android:layout_gravity="end"
+    app:layout_anchorGravity="end"
     android:paddingHorizontal="12dp"
     android:paddingVertical="8dp">
 
@@ -12,11 +13,12 @@
         android:id="@+id/replayContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        android:elevation="0dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/transparent"
         android:background="@color/transparent"
+        android:elevation="0dp"
+        app:contentPadding="0dp"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -32,25 +34,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/helvetica"
                 android:lineSpacingExtra="8dp"
+                android:maxLines="2"
                 android:paddingVertical="6dp"
-                android:text="Reference message content"
+                android:text="Reference"
                 android:textColor="#EAEAEA"
                 android:textSize="14sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <View
+        android:id="@+id/extraMargin"
+        android:layout_width="wrap_content"
+        android:layout_height="4dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/replayContainer" />
 
     <LinearLayout
         android:id="@+id/chatContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/replayContainer">
-
+        app:layout_constraintTop_toBottomOf="@id/extraMargin">
         <TextView
             android:id="@+id/response"
             android:layout_width="wrap_content"
