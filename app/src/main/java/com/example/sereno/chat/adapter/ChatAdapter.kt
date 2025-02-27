@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.isUser
 import com.example.sereno.common.extensions.onClickWithHaptics
+import com.example.sereno.common.utils.DateUtils
 import com.example.sereno.databinding.ChatItemBinding
 import com.example.sereno.databinding.DateItemBinding
 import java.util.Calendar
 
 class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val chats = mutableListOf<Chat>()
+    private val displayItems = mutableListOf<DisplayItem>()
     private var scrollToPosition: ((position: Int, smoothScroll: Boolean) -> Unit)? = null
     private var blinkAtPosition: Int? = null
-
-    private val displayItems = mutableListOf<DisplayItem>()
 
     companion object {
         private const val CHAT = 0
@@ -25,29 +25,21 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     sealed class DisplayItem {
         data class ChatItem(val chat: Chat) : DisplayItem()
-        data class DateItem(val chat: Chat) : DisplayItem()
+        data class DateItem(val chat: Chat, val formattedDate: String) : DisplayItem()
     }
 
     inner class ChatVH(private val binding: ChatItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind() {
-            val displayItem = displayItems[adapterPosition] as DisplayItem.ChatItem
+        fun bind(position: Int) {
+            val displayItem = displayItems[position] as DisplayItem.ChatItem
             val chat = displayItem.chat
+
             binding.user.isVisible = !chat.isBot
             binding.bot.isVisible = chat.isBot
 
-            var replayChat: Chat? = null
+            val replayChat = findReplayChat(chat, position)
 
-            val prevChatPos = findPreviousChatPosition(adapterPosition)
-            val prevChat = if (prevChatPos != -1) {
-                (displayItems[prevChatPos] as DisplayItem.ChatItem).chat
-            } else null
-
-            if (shouldShowReplaySection(chat, prevChat)) {
-                replayChat = chats.find { it.id == chat.replayChatId }
-            }
-
-            if (adapterPosition == blinkAtPosition) {
+            if (position == blinkAtPosition) {
                 binding.user.startBlinkAnimation()
                 binding.bot.startBlinkAnimation()
                 blinkAtPosition = null
@@ -55,68 +47,37 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.user.setChatText(chat, replayChat)
             binding.bot.setChatText(chat, replayChat)
+
             if (replayChat != null) {
-                binding.user.onClickWithHaptics {
+                val clickListener = {
                     scrollToMentionedChat(chat)
                 }
-                binding.bot.onClickWithHaptics {
-                    scrollToMentionedChat(chat)
-                }
+                binding.user.onClickWithHaptics(clickListener)
+                binding.bot.onClickWithHaptics(clickListener)
             }
+        }
+
+        private fun findReplayChat(chat: Chat, position: Int): Chat? {
+            if (chat.replayChatId == null) return null
+
+            val prevChatPos = findPreviousChatPosition(position)
+            val prevChat = if (prevChatPos != -1) {
+                (displayItems[prevChatPos] as DisplayItem.ChatItem).chat
+            } else null
+
+            if (shouldShowReplaySection(chat, prevChat)) {
+                return chats.find { it.id == chat.replayChatId }
+            }
+
+            return null
         }
     }
 
     inner class DateVH(private val binding: DateItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind() {
-            val displayItem = displayItems[adapterPosition] as DisplayItem.DateItem
-            val chat = displayItem.chat
-
-            val chatCalendar = Calendar.getInstance().apply {
-                timeInMillis = chat.createdAt
-            }
-
-            val today = Calendar.getInstance()
-            val yesterday = Calendar.getInstance().apply {
-                add(Calendar.DAY_OF_YEAR, -1)
-            }
-
-            val dateText = when {
-                isSameDay(chatCalendar, today) -> {
-                    "Today"
-                }
-                isSameDay(chatCalendar, yesterday) -> {
-                    "Yesterday"
-                }
-                isWithinLastWeek(chatCalendar, today) -> {
-                    val dayFormat = java.text.SimpleDateFormat("EEEE", java.util.Locale.getDefault())
-                    dayFormat.format(chatCalendar.time)
-                }
-                chatCalendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) -> {
-                    val dateFormat = java.text.SimpleDateFormat("EEE, d MMM", java.util.Locale.getDefault())
-                    dateFormat.format(chatCalendar.time)
-                }
-                else -> {
-                    val dateFormat = java.text.SimpleDateFormat("EEE, d MMM yyyy", java.util.Locale.getDefault())
-                    dateFormat.format(chatCalendar.time)
-                }
-            }
-
-            binding.date.text = dateText
-        }
-
-        private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-            return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                    cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
-        }
-
-        private fun isWithinLastWeek(chatDate: Calendar, today: Calendar): Boolean {
-            val sixDaysAgo = Calendar.getInstance().apply {
-                timeInMillis = today.timeInMillis
-                add(Calendar.DAY_OF_YEAR, -6) // 6 days ago (today + yesterday + 5 more days = 7 days total)
-            }
-
-            return chatDate.after(sixDaysAgo) && chatDate.before(today)
+        fun bind(position: Int) {
+            val displayItem = displayItems[position] as DisplayItem.DateItem
+            binding.date.text = displayItem.formattedDate
         }
     }
 
@@ -142,7 +103,6 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private fun shouldShowReplaySection(chat: Chat, prevChat: Chat?): Boolean {
         if (chat.replayChatId == null) return false
         if (chat.replayChatId == prevChat?.id && prevChat.isUser()) return false
-
         return true
     }
 
@@ -156,76 +116,55 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val vh = when (viewType) {
-            CHAT -> ChatVH(
-                ChatItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
-
-            DATE -> DateVH(
-                DateItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
-
-            else -> {
-                throw IllegalArgumentException("Invalid view type")
-            }
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            CHAT -> ChatVH(ChatItemBinding.inflate(inflater, parent, false))
+            DATE -> DateVH(DateItemBinding.inflate(inflater, parent, false))
+            else -> throw IllegalArgumentException("Invalid view type: $viewType")
         }
-        return vh
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is ChatVH -> {
-                holder.bind()
-            }
-
-            is DateVH -> {
-                holder.bind()
-            }
+            is ChatVH -> holder.bind(position)
+            is DateVH -> holder.bind(position)
         }
     }
 
     override fun getItemCount(): Int = displayItems.size
 
-    private fun shouldShowDate(index: Int): Boolean {
-        if (index == 0) return true
+    private fun rebuildDisplayItems() {
+        displayItems.clear()
 
-        val currentChat = chats[index]
-        val previousChat = chats[index - 1]
+        chats.forEachIndexed { index, chat ->
+            val previousChat = chats.getOrNull(index - 1)
+
+            if (shouldShowDateSeparator(chat, previousChat)) {
+                val formattedDate = DateUtils.formatDate(chat.createdAt)
+                displayItems.add(DisplayItem.DateItem(chat, formattedDate))
+            }
+
+            displayItems.add(DisplayItem.ChatItem(chat))
+        }
+    }
+
+    private fun shouldShowDateSeparator(current: Chat, previous: Chat?): Boolean {
+        if (previous == null) return true
 
         val currentCalendar = Calendar.getInstance().apply {
-            timeInMillis = currentChat.createdAt
+            timeInMillis = current.createdAt
         }
         val previousCalendar = Calendar.getInstance().apply {
-            timeInMillis = previousChat.createdAt
+            timeInMillis = previous.createdAt
         }
 
         return currentCalendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
                 currentCalendar.get(Calendar.DAY_OF_YEAR) != previousCalendar.get(Calendar.DAY_OF_YEAR)
     }
 
-    private fun rebuildDisplayItems() {
-        displayItems.clear()
-
-        chats.forEachIndexed { index, chat ->
-            if (shouldShowDate(index) || index == 0) {
-                displayItems.add(DisplayItem.DateItem(chat))
-            }
-            displayItems.add(DisplayItem.ChatItem(chat))
-        }
-    }
-
-    fun setChats(chats: List<Chat>) {
-        this.chats.clear()
-        this.chats.addAll(chats)
-
+    fun setChats(chatList: List<Chat>) {
+        chats.clear()
+        chats.addAll(chatList)
         rebuildDisplayItems()
         notifyDataSetChanged()
     }
@@ -234,14 +173,16 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val oldSize = displayItems.size
         chats.add(chat)
 
-        val needsDateHeader = chats.size > 1 && shouldShowDate(chats.size - 1)
+        val previousChat = chats.getOrNull(chats.size - 2)
+        val needsDateHeader = shouldShowDateSeparator(chat, previousChat)
 
         if (needsDateHeader) {
-            displayItems.add(DisplayItem.DateItem(chat))
+            val formattedDate = DateUtils.formatDate(chat.createdAt)
+            displayItems.add(DisplayItem.DateItem(chat, formattedDate))
         }
+
         displayItems.add(DisplayItem.ChatItem(chat))
 
-        // If we added both a date and a chat
         if (needsDateHeader) {
             notifyItemRangeInserted(oldSize, 2)
         } else {
@@ -250,10 +191,10 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun isBot(position: Int): Boolean {
-        val item = displayItems.getOrNull(position)
-        return if (item is DisplayItem.ChatItem) {
-            item.chat.isBot
-        } else false
+        return when (val item = displayItems.getOrNull(position)) {
+            is DisplayItem.ChatItem -> item.chat.isBot
+            else -> false
+        }
     }
 
     fun getChat(position: Int): Chat? {
@@ -264,7 +205,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    fun isChat(position: Int):Boolean{
+    fun isChat(position: Int): Boolean {
         return displayItems.getOrNull(position) is DisplayItem.ChatItem
     }
 
