@@ -67,7 +67,6 @@ class ChatActivity : AppCompatActivity() {
         binding.chats.adapter = chatAdapter
         binding.chats.layoutManager = LinearLayoutManager(this)
         vm.onEvent(ChatEvent.LoadChats)
-        binding.chats.setRecycledViewPool(null)
         chatAdapter.setScrollToPositionListener { position, smoothScroll ->
 
             if (smoothScroll) {

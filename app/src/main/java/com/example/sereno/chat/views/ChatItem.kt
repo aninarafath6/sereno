@@ -8,15 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.animation.LinearInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import com.example.sereno.R
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.databinding.ChatBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -29,7 +26,6 @@ class ChatItem @JvmOverloads constructor(
 
     val binding: ChatBinding = ChatBinding.inflate(LayoutInflater.from(context), this, true)
     private var chatOwner = USER
-    private var blinkJob: Job? = null
 
     companion object {
         private const val USER = 0
@@ -51,19 +47,14 @@ class ChatItem @JvmOverloads constructor(
 
     fun setChatText(chat: Chat, replayChat: Chat? = null) {
         binding.response.text = chat.message
-        binding.replayContainer.post {
-            adjustReplayContainerConstraints()
-        }
-        binding.replayContainer.isVisible = replayChat != null
         binding.replay.text = replayChat?.message
+        binding.replayContainer.isVisible = replayChat != null
         binding.replayTo.text = getReplayToString(replayChat?.isBot == true)
-
+        binding.root.requestLayout()
     }
 
     fun startBlinkAnimation() {
-        blinkJob?.cancel()
-
-        blinkJob = CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val animator = ValueAnimator.ofFloat(1f, 0.3f, 1f).apply {
                 duration = 500
                 repeatCount = ValueAnimator.INFINITE
@@ -71,7 +62,7 @@ class ChatItem @JvmOverloads constructor(
                 interpolator = LinearInterpolator()
                 addUpdateListener {
                     val alphaValue = it.animatedValue as Float
-                    binding.chatContainer.alpha = alphaValue
+                    binding.root.alpha = alphaValue
                 }
                 start()
             }
@@ -81,7 +72,6 @@ class ChatItem @JvmOverloads constructor(
             binding.chatContainer.animate().alpha(1f).setDuration(200).start()
         }
     }
-
 
     private fun setBackground() {
         val background = if (chatOwner == BOT) {
@@ -99,20 +89,5 @@ class ChatItem @JvmOverloads constructor(
         binding.root.background = null
         binding.root.setBackgroundResource(background)
         binding.replayBg.setBackgroundResource(replayBackground)
-    }
-
-    private fun adjustReplayContainerConstraints() {
-        binding.root.doOnLayout {
-            val widthOfReplay = binding.replayContainer.width
-            val widthOfResponse = binding.chatContainer.width
-
-            binding.replayContainer.updateLayoutParams {
-                width = if (widthOfReplay > widthOfResponse) {
-                    LayoutParams.WRAP_CONTENT
-                } else {
-                    LayoutParams.MATCH_PARENT
-                }
-            }
-        }
     }
 }

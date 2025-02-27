@@ -26,6 +26,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
             if (shouldShowReplaySection(chat, prevChat)) {
                 replayChat = chats.find { it.id == chat.replayChatId }
             }
+
             if (adapterPosition == blinkAtPosition) {
                 binding.user.startBlinkAnimation()
                 binding.bot.startBlinkAnimation()
@@ -51,14 +52,12 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
         scrollToPosition?.invoke(index, true)
     }
 
-
     private fun shouldShowReplaySection(chat: Chat, prevChat: Chat?): Boolean {
         if (chat.replayChatId == null) return false
         if (chat.replayChatId == prevChat?.id && !prevChat.isBot) return false
 
         return true
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding =
@@ -113,7 +112,7 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
         scrollToPosition = listener
     }
 
-    fun blinkItemAtPos(pos:Int){
+    fun blinkItemAtPos(pos: Int) {
         blinkAtPosition = pos
         notifyItemChanged(pos)
     }

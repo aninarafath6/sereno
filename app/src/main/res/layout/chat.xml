@@ -13,7 +13,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/replayContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:elevation="0dp"
@@ -52,7 +52,7 @@
                 android:fontFamily="@font/helvetica"
                 android:lineSpacingExtra="8dp"
                 android:maxLines="2"
-                android:text="wh afd  adf adf  afadfadf adf adf adsf"
+                android:text="wh "
                 android:textColor="#EAEAEA"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -61,7 +61,7 @@
 
     <LinearLayout
         android:id="@+id/chatContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
             android:lineSpacingExtra="8dp"
-            android:text="hmm d adf as fa sdfas dfa sf df f asdf  saf saf  adf ad ff saf asd  "
+            android:text="hmm adf af "
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>
