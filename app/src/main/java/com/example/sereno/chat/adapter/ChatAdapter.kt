@@ -48,13 +48,22 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.user.setChatText(chat, replayChat)
             binding.bot.setChatText(chat, replayChat)
 
-            if (replayChat != null) {
-                val clickListener = {
-                    scrollToMentionedChat(chat)
+            binding.user.apply {
+                if (replayChat != null) {
+                    onClickWithHaptics { scrollToMentionedChat(chat) }
+                } else {
+                    setOnClickListener(null)
                 }
-                binding.user.onClickWithHaptics(clickListener)
-                binding.bot.onClickWithHaptics(clickListener)
             }
+
+            binding.bot.apply {
+                if (replayChat != null) {
+                    onClickWithHaptics { scrollToMentionedChat(chat) }
+                } else {
+                    setOnClickListener(null)
+                }
+            }
+
         }
 
         private fun findReplayChat(chat: Chat, position: Int): Chat? {
