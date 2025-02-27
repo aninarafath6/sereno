@@ -80,7 +80,6 @@ class ChatActivity : AppCompatActivity() {
         val itemTouchHelper =
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
                 private val swipeThreshold = 40f * Resources.getSystem().displayMetrics.density
-
                 override fun getMovementFlags(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder
@@ -104,6 +103,7 @@ class ChatActivity : AppCompatActivity() {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
+                    if(!chatAdapter.isChat(position)) return
                     if (position == RecyclerView.NO_POSITION) return
                     binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                     val chat = chatAdapter.getChat(position)
@@ -115,7 +115,9 @@ class ChatActivity : AppCompatActivity() {
                     c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                     dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
                 ) {
+
                     val position = viewHolder.adapterPosition
+                    if(!chatAdapter.isChat(position)) return
                     if (position == RecyclerView.NO_POSITION) return
                     val isBotMessage = chatAdapter.isBot(position)
 
@@ -169,7 +171,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         vm.isLoading.observe(this) {
-            binding.heading.online.text = if (it) "Typing" else "Online"
+            binding.heading.online.text = if (it) "Typing..." else "Online"
         }
         vm.selectedChat.observe(this) {
             binding.field.replayPreviewContainer.isVisible = it != null

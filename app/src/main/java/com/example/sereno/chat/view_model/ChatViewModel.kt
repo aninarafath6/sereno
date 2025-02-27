@@ -71,7 +71,7 @@ class ChatViewModel @Inject constructor(
             _chats.value = ChatState(chats, consumeWhole = true)
 
             if (chats.isEmpty()) {
-                saveAndUpdateChat(NEW_BOT_CHAT)
+                saveAndUpdateChat(NEW_BOT_CHAT, consumeWhole = true)
             }
         }
     }
@@ -88,12 +88,13 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveAndUpdateChat(chat: Chat) {
+    private suspend fun saveAndUpdateChat(chat: Chat, consumeWhole: Boolean = false) {
         // Todo: Handle exceptions, like what if user has no enough space to store the chat, etc..
         withContext(Dispatchers.IO) {
             dao.saveChat(chat)
         }
-        _chats.value = _chats.value.copy(chats = _chats.value.chats + chat, consumeWhole = false)
+        _chats.value =
+            _chats.value.copy(chats = _chats.value.chats + chat, consumeWhole = consumeWhole)
     }
 
     fun setSwipedChat(chat: Chat?) {

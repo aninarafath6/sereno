@@ -18,3 +18,5 @@ data class Chat(
     @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString(),
 )
+
+fun Chat.isUser(): Boolean = !isBot
