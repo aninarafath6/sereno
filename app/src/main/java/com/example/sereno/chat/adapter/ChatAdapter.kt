@@ -6,11 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.ChatItemContent
 import com.example.sereno.chat.model.ChatItemContent.Companion.CHAT_ITEM_TYPE
-import com.example.sereno.chat.model.ChatItemContent.Companion.DATE_ITEM_TYPE
+import com.example.sereno.chat.model.ChatItemContent.Companion.LOADING_ITEM_TYPE
 import com.example.sereno.chat.view_holder.ChatViewHolder
 import com.example.sereno.chat.view_holder.DateViewHolder
 import com.example.sereno.chat.view_holder.LoadingViewHolder
 import com.example.sereno.common.utils.DateUtils
+import com.example.sereno.databinding.BotChatLoadingBinding
 import com.example.sereno.databinding.ChatItemBinding
 import com.example.sereno.databinding.DateItemBinding
 import java.util.Calendar
@@ -29,25 +30,17 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val vh = when (viewType) {
             CHAT_ITEM_TYPE -> ChatViewHolder(
                 ChatItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+                    LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            DATE_ITEM_TYPE -> LoadingViewHolder(
-                ChatItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
+            LOADING_ITEM_TYPE -> LoadingViewHolder(
+                BotChatLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
 
             else -> DateViewHolder(
                 DateItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+                    LayoutInflater.from(parent.context), parent, false
                 )
             )
 
@@ -58,7 +51,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is LoadingViewHolder -> holder.bind()
+            is LoadingViewHolder -> {}
             is ChatViewHolder -> holder.bind(position, chats)
             is DateViewHolder -> holder.bind((chats[position] as ChatItemContent.DateItem).formattedDate)
         }
@@ -68,6 +61,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private fun shouldShowDateSeparator(current: Chat, previous: Chat?): Boolean {
         if (previous == null) return true // for the first chat , we always show date before that chat.
+
 
         val currentCalendar = Calendar.getInstance().apply {
             timeInMillis = current.createdAt
@@ -94,6 +88,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun addChat(chat: Chat) {
+        removeLoading()
         val lastChat = chats.lastOrNull()?.let {
             if (it is ChatItemContent.ChatItem) it.chat else null
         }
@@ -106,5 +101,17 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             chats.add(ChatItemContent.ChatItem(chat))
             notifyItemInserted(chats.size - 1)
         }
+    }
+
+    fun removeLoading() {
+        val lastChat = chats.indexOfLast { it is ChatItemContent.Loading }
+        if (lastChat == -1) return
+        chats.removeAt(lastChat)
+        notifyItemRemoved(chats.size)
+    }
+
+    fun addLoading() {
+        chats.add(ChatItemContent.Loading)
+        notifyItemInserted(chats.lastIndex)
     }
 }

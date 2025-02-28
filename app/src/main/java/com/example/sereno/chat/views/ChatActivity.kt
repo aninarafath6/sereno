@@ -164,7 +164,6 @@ class ChatActivity : AppCompatActivity() {
                     chatAdapter.addChat(it.chats.lastOrNull() ?: return@collectLatest)
                     binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                 }
-
                 scrollToBottom()
             }
         }
@@ -172,9 +171,10 @@ class ChatActivity : AppCompatActivity() {
         vm.isLoading.observe(this) {
             binding.heading.online.text = if (it) "Typing..." else "Online"
             if (it) {
-//                chatAdapter.setLoading()
+                chatAdapter.addLoading()
+                scrollToBottom()
             } else {
-//                chatAdapter.hideLoading()
+                chatAdapter.removeLoading()
             }
         }
         vm.selectedChat.observe(this) {

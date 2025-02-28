@@ -46,7 +46,6 @@ class ChatViewModel @Inject constructor(
         if (event.message.trim().isBlank()) return
 
         viewModelScope.launch {
-            _isLoading.value = true
             val userChat = Chat(
                 message = event.message.trim(),
                 replayChatId = _selectedChat.value?.id,
@@ -54,6 +53,7 @@ class ChatViewModel @Inject constructor(
                 createdAt = System.currentTimeMillis()
             )
             saveAndUpdateChat(userChat)
+            _isLoading.value = true
 
             val replayTo = if (userChat.replayChatId != null) {
                 chats.value.chats.lastOrNull { it.id == userChat.replayChatId }
@@ -71,7 +71,6 @@ class ChatViewModel @Inject constructor(
                 }
                 onEvent(ChatEvent.BotResponded(response, replayChat = userChat.id))
             }
-            _isLoading.value = false
             _selectedChat.value = null
         }
     }
@@ -90,7 +89,7 @@ class ChatViewModel @Inject constructor(
         var chatId = botResponse.replayChat
         viewModelScope.launch {
             botResponse.messages.forEach {
-                delay(500)
+                delay(800)
                 val botChat = Chat(
                     message = it,
                     replayChatId = chatId,
@@ -100,6 +99,7 @@ class ChatViewModel @Inject constructor(
                 chatId = botChat.id
                 saveAndUpdateChat(botChat)
             }
+            _isLoading.value = false
         }
     }
 
