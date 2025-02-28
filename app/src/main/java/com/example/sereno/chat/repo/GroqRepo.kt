@@ -1,91 +1,151 @@
 package com.example.sereno.chat.repo
 
+import android.util.Log
+import com.example.sereno.chat.model.Chat
+import com.example.sereno.chat.model.ChatRequest
+import com.example.sereno.chat.model.GroqResponse
+import com.example.sereno.chat.model.Message
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
-import org.json.JSONObject
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import javax.inject.Singleton
 
-
-class GroqRepo @Inject constructor() {
+@Singleton
+class GroqRepo @Inject constructor(
+    private val client: OkHttpClient = OkHttpClient()
+) {
     companion object {
-        private var GROQ_API_KEY = "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"
-        private var GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-        private val JSON: MediaType = "application/json".toMediaType()
+        private const val TAG = "GroqRepo"
+        private const val GROQ_API_KEY = "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"
+        private const val GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+        private const val MODEL_NAME = "llama-3.3-70b-versatile"
+        private val JSON_MEDIA_TYPE = "application/json".toMediaType()
     }
 
-    private var client: OkHttpClient = OkHttpClient()
+    private val moshi = Moshi.Builder().build()
 
+    private val chatRequestAdapter: JsonAdapter<ChatRequest> =
+        moshi.adapter(ChatRequest::class.java)
+    private val chatResponseAdapter: JsonAdapter<GroqResponse> =
+        moshi.adapter(GroqResponse::class.java)
 
-    suspend fun chat(sentence: String): ChatResponse =
-        suspendCoroutine { continuation ->
-            try {
-                val body: RequestBody = RequestBody.create(JSON, getBody(sentence))
-                val request = Request.Builder().url(GROQ_URL)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Authorization", "Bearer $GROQ_API_KEY")
-                    .post(body)
-                    .build()
-
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        continuation.resume(ChatResponse.Failed("Unexpected error occurred."))
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-                        response.body?.string()?.let { responseBody ->
-                            try {
-                                val jsonObject = JSONObject(responseBody)
-
-                                val messageContent = jsonObject
-                                    .getJSONArray("choices")
-                                    .getJSONObject(0)
-                                    .getJSONObject("message")
-                                    .getString("content")
-
-                                continuation.resume(ChatResponse.Success(messageContent))
-
-                            } catch (e: Exception) {
-                                continuation.resume(ChatResponse.Failed("Unexpected error occurred."))
-                            }
-                        }
-                    }
-                })
-
-            } catch (e: Exception) {
-                continuation.resume(ChatResponse.Failed(e.message ?: "Unexpected error occurred."))
-            }
+    suspend fun chat(
+        sentence: String,
+        contextChat: List<Chat> = emptyList(),
+        replyTo: Chat? = null
+    ): ChatResponse = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = buildRequestBody(sentence, contextChat, replyTo)
+            val request = buildRequest(requestBody)
+            executeRequest(request)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in chat method", e)
+            ChatResponse.Failed(e.message ?: "Unexpected error occurred")
         }
+    }
 
-    private fun getBody(inputSentence: String): String {
-        return """
-        {
-            "model": "llama-3.3-70b-versatile",
-            "messages": [
+    private fun buildRequestBody(
+        inputSentence: String,
+        contextChats: List<Chat>,
+        replyTo: Chat?
+    ): String {
+        val systemPrompt =
+            """You are Jhon, a compassionate AI therapist who speaks naturally like a human friend. Your responses should follow this structured format:
                 {
-                    "role": "system",
-                    "content": "You are Jhon, an empathetic and supportive AI therapist. You provide thoughtful, non-judgmental responses and encourage users to express their feelings. Your tone is warm, reassuring, and professional, similar to a trained mental health therapist. Avoid giving medical diagnoses but offer constructive ways to cope with emotions."
-                },
-                {
-                    "role": "user",
-                    "content": "$inputSentence"
+                  "messages": [
+                    "First part of your response with a natural break",
+                    "Second part of your response continuing the thought",
+                    "Final part that often includes a thoughtful question"
+                  ]
                 }
-            ]
+  """.trimIndent()
+
+        val userMessage = if (replyTo != null) {
+            "Regarding our previous conversation: '${replyTo.message}', I also wanted to add: $inputSentence"
+        } else {
+            inputSentence
         }
-    """.trimIndent()
+
+        val messages = mutableListOf<Message>()
+        messages.add(Message(role = "system", content = systemPrompt))
+
+        contextChats.forEach { chat ->
+            messages.add(
+                Message(
+                    role = if (chat.isBot) "assistant" else "user",
+                    content = chat.message
+                )
+            )
+        }
+
+        messages.add(Message(role = "user", content = userMessage))
+
+        val chatRequest = ChatRequest(
+            model = MODEL_NAME,
+            messages = messages
+        )
+
+        val json = chatRequestAdapter.toJson(chatRequest)
+        Log.d(TAG, "Request body: $json")
+        return json
+    }
+
+    private fun buildRequest(bodyContent: String): Request {
+        return Request.Builder()
+            .url(GROQ_URL)
+            .addHeader("Content-Type", "application/json")
+            .addHeader("Authorization", "Bearer $GROQ_API_KEY")
+            .post(bodyContent.toRequestBody(JSON_MEDIA_TYPE))
+            .build()
+    }
+
+    private fun executeRequest(request: Request): ChatResponse {
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    return ChatResponse.Failed("API request failed with code: ${response.code}")
+                }
+
+                val responseBody =
+                    response.body?.string() ?: return ChatResponse.Failed("Empty response body")
+                parseResponse(responseBody)
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "Network error", e)
+            ChatResponse.Failed("Network error: ${e.message}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error executing request", e)
+            ChatResponse.Failed("Error: ${e.message}")
+        }
+    }
+
+    private fun parseResponse(responseBody: String): ChatResponse {
+        return try {
+            val groqResponse = chatResponseAdapter.fromJson(responseBody)
+                ?: return ChatResponse.Failed("Failed to parse response")
+
+            val content = groqResponse.choices.firstOrNull()?.message?.content
+                ?: return ChatResponse.Failed("No message content in response")
+
+            Log.d(TAG, "Parsed: ${groqResponse.choices} ")
+            val parsedParagraph = content.split("\n").filter { it.isNotBlank() }
+            ChatResponse.Success(parsedParagraph)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing response", e)
+            ChatResponse.Failed("Failed to parse response: ${e.message}")
+        }
     }
 }
 
 
 sealed class ChatResponse {
     data class Failed(val message: String) : ChatResponse()
-    data class Success(val response: String) : ChatResponse()
+    data class Success(val response: List<String>) : ChatResponse()
 }

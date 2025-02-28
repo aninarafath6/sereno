@@ -86,7 +86,7 @@ class ChatActivity : AppCompatActivity() {
                     val position = viewHolder.adapterPosition
                     if (position == RecyclerView.NO_POSITION) return 0
 
-                    val isBotMessage = chatAdapter.isBot(position)
+                    val isBotMessage = vm.chats.value.chats[position].isBot
                     val swipeDir = if (isBotMessage) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT
 
                     return makeMovementFlags(0, swipeDir)
@@ -171,6 +171,7 @@ class ChatActivity : AppCompatActivity() {
 
         vm.isLoading.observe(this) {
             binding.heading.online.text = if (it) "Typing..." else "Online"
+            chatAdapter.setLoading(it)
         }
         vm.selectedChat.observe(this) {
             binding.field.replayPreviewContainer.isVisible = it != null

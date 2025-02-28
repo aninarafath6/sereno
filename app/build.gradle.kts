@@ -77,6 +77,12 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.12.0")
     implementation("io.github.jan-tennert.supabase:serializer-moshi:3.0.3")
 
+    implementation("com.squareup.moshi:moshi:1.15.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+
+
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
@@ -88,5 +94,7 @@ dependencies {
     implementation("androidx.room:room-rxjava3:2.6.1")
     implementation("androidx.room:room-guava:2.6.1")
     testImplementation("androidx.room:room-testing:2.5.2")
+
+    implementation ("com.airbnb.android:lottie:3.5.0")
 
 }
