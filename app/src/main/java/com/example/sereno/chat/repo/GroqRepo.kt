@@ -57,14 +57,7 @@ class GroqRepo @Inject constructor(
         replyTo: Chat?
     ): String {
         val systemPrompt =
-            """You are Jhon, a compassionate AI therapist who speaks naturally like a human friend. Your responses should follow this structured format:
-                {
-                  "messages": [
-                    "First part of your response with a natural break",
-                    "Second part of your response continuing the thought",
-                    "Final part that often includes a thoughtful question"
-                  ]
-                }
+            """Replay in one line, with emoji, like a humans casual chat.
   """.trimIndent()
 
         val userMessage = if (replyTo != null) {

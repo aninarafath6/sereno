@@ -66,93 +66,93 @@ class ChatActivity : AppCompatActivity() {
     private fun initChats() {
         binding.chats.adapter = chatAdapter
         binding.chats.layoutManager = LinearLayoutManager(this)
+        binding.chats.setHasFixedSize(true)
         vm.onEvent(ChatEvent.LoadChats)
-        chatAdapter.setScrollToPositionListener { position, smoothScroll ->
-            if (smoothScroll) {
-                binding.chats.smoothScrollToPosition(position)
-            } else {
-                binding.chats.scrollToPosition(position)
-            }
-            chatAdapter.blinkItemAtPos(position)
-        }
+//        chatAdapter.setScrollToPositionListener { position, smoothScroll ->
+//            if (smoothScroll) {
+//                binding.chats.smoothScrollToPosition(position)
+//            } else {
+//                binding.chats.scrollToPosition(position)
+//            }
+//            chatAdapter.blinkItemAtPos(position)
+//        }
 
-        val itemTouchHelper =
-            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-                private val swipeThreshold = 40f * Resources.getSystem().displayMetrics.density
-                override fun getMovementFlags(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder
-                ): Int {
-                    val position = viewHolder.adapterPosition
-                    if (position == RecyclerView.NO_POSITION) return 0
-
-                    val isBotMessage = vm.chats.value.chats[position].isBot
-                    val swipeDir = if (isBotMessage) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT
-
-                    return makeMovementFlags(0, swipeDir)
-                }
-
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return false
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.adapterPosition
-                    if(!chatAdapter.isChat(position)) return
-                    if (position == RecyclerView.NO_POSITION) return
-                    binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                    val chat = chatAdapter.getChat(position)
-                    vm.setSwipedChat(chat)
-                    binding.chats.adapter?.notifyItemChanged(position)
-                }
-
-                override fun onChildDraw(
-                    c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                    dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
-                ) {
-
-                    val position = viewHolder.adapterPosition
-                    if(!chatAdapter.isChat(position)) return
-                    if (position == RecyclerView.NO_POSITION) return
-                    val isBotMessage = chatAdapter.isBot(position)
-
-                    val clampedDx =
-                        if (isBotMessage) min(dX, swipeThreshold) else max(dX, -swipeThreshold)
-
-                    if (!isCurrentlyActive && abs(dX) > swipeThreshold) {
-                        viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
-                    }
-
-                    super.onChildDraw(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        clampedDx,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                }
-
-                override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-                    return .1f
-                }
-
-                override fun clearView(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder
-                ) {
-                    super.clearView(recyclerView, viewHolder)
-                    viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
-                }
-            })
-
-        itemTouchHelper.attachToRecyclerView(binding.chats)
-
+//        val itemTouchHelper =
+//            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+//                private val swipeThreshold = 40f * Resources.getSystem().displayMetrics.density
+//                override fun getMovementFlags(
+//                    recyclerView: RecyclerView,
+//                    viewHolder: RecyclerView.ViewHolder
+//                ): Int {
+//                    val position = viewHolder.adapterPosition
+//                    if (position == RecyclerView.NO_POSITION) return 0
+//
+//                    val isBotMessage = vm.chats.value.chats[position].isBot
+//                    val swipeDir = if (isBotMessage) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT
+//
+//                    return makeMovementFlags(0, swipeDir)
+//                }
+//
+//                override fun onMove(
+//                    recyclerView: RecyclerView,
+//                    viewHolder: RecyclerView.ViewHolder,
+//                    target: RecyclerView.ViewHolder
+//                ): Boolean {
+//                    return false
+//                }
+//
+//                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                    val position = viewHolder.adapterPosition
+////                    if (!chatAdapter.isChat(position)) return
+//                    if (position == RecyclerView.NO_POSITION) return
+//                    binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+////                    val chat = chatAdapter.getChat(position)
+////                    vm.setSwipedChat(chat)
+//                    binding.chats.adapter?.notifyItemChanged(position)
+//                }
+//
+//                override fun onChildDraw(
+//                    c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+//                    dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
+//                ) {
+//
+//                    val position = viewHolder.adapterPosition
+////                    if (!chatAdapter.isChat(position)) return
+////                    if (position == RecyclerView.NO_POSITION) return
+////                    val isBotMessage = chatAdapter.isBot(position)
+////
+////                    val clampedDx =
+////                        if (isBotMessage) min(dX, swipeThreshold) else max(dX, -swipeThreshold)
+//
+//                    if (!isCurrentlyActive && abs(dX) > swipeThreshold) {
+//                        viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
+//                    }
+//
+//                    super.onChildDraw(
+//                        c,
+//                        recyclerView,
+//                        viewHolder,
+//                        0f,// Todo:fix
+//                        dY,
+//                        actionState,
+//                        isCurrentlyActive
+//                    )
+//                }
+//
+//                override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+//                    return .1f
+//                }
+//
+//                override fun clearView(
+//                    recyclerView: RecyclerView,
+//                    viewHolder: RecyclerView.ViewHolder
+//                ) {
+//                    super.clearView(recyclerView, viewHolder)
+//                    viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
+//                }
+//            })
+//
+//        itemTouchHelper.attachToRecyclerView(binding.chats)
     }
 
     private fun initObservers() {
@@ -171,7 +171,11 @@ class ChatActivity : AppCompatActivity() {
 
         vm.isLoading.observe(this) {
             binding.heading.online.text = if (it) "Typing..." else "Online"
-            chatAdapter.setLoading(it)
+            if (it) {
+//                chatAdapter.setLoading()
+            } else {
+//                chatAdapter.hideLoading()
+            }
         }
         vm.selectedChat.observe(this) {
             binding.field.replayPreviewContainer.isVisible = it != null

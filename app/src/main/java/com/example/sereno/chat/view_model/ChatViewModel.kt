@@ -1,6 +1,5 @@
 package com.example.sereno.chat.view_model
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,10 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,17 +25,13 @@ class ChatViewModel @Inject constructor(
     private val dao: ChatsDao
 ) : ViewModel() {
 
-    private val _prevChats = MutableStateFlow(ChatState())
-    private val _newSessionChats = MutableStateFlow(ChatState())
     private val _isLoading = MutableLiveData(false)
     private val _selectedChat = MutableLiveData<Chat?>()
-
-    val chats: StateFlow<ChatState> = combine(_prevChats, _newSessionChats) { prev, newSession ->
-        prev.merge(newSession)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, ChatState())
+    private val _chats = MutableStateFlow(ChatState())
 
     val isLoading: LiveData<Boolean> = _isLoading
     val selectedChat: LiveData<Chat?> = _selectedChat
+    val chats: StateFlow<ChatState> = _chats
 
     fun onEvent(event: ChatEvent) {
         when (event) {
@@ -62,19 +54,16 @@ class ChatViewModel @Inject constructor(
                 createdAt = System.currentTimeMillis()
             )
             saveAndUpdateChat(userChat)
+
             val replayTo = if (userChat.replayChatId != null) {
-                Log.d("ChatViewModel", "Replay to: ${userChat.replayChatId}")
-                Log.d(
-                    "ChatViewModel",
-                    "Replay to: ${chats.value.chats.lastOrNull { it.id == _selectedChat.value?.replayChatId }}"
-                )
                 chats.value.chats.lastOrNull { it.id == userChat.replayChatId }
             } else null
+
             withContext(Dispatchers.IO) {
                 val response = when (val chatResponse =
                     groqRepo.chat(
                         userChat.message,
-                        contextChat = _prevChats.value.chats,
+                        contextChat = _chats.value.chats.subList(0, _chats.value.chats.size - 2),
                         replayTo
                     )) {
                     is ChatResponse.Failed -> listOf("Sorry, I'm not able to respond to that.")
@@ -82,6 +71,7 @@ class ChatViewModel @Inject constructor(
                 }
                 onEvent(ChatEvent.BotResponded(response, replayChat = userChat.id))
             }
+            _isLoading.value = false
             _selectedChat.value = null
         }
     }
@@ -89,8 +79,7 @@ class ChatViewModel @Inject constructor(
     private fun loadChats() {
         viewModelScope.launch {
             val chats = withContext(Dispatchers.IO) { dao.getChats() }
-            _prevChats.value = ChatState(chats, consumeWhole = true)
-
+            _chats.value = ChatState(chats, consumeWhole = true)
             if (chats.isEmpty()) {
                 saveAndUpdateChat(NEW_BOT_CHAT, consumeWhole = true)
             }
@@ -102,8 +91,6 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             botResponse.messages.forEach {
                 delay(500)
-                _isLoading.value = true
-                delay(500)
                 val botChat = Chat(
                     message = it,
                     replayChatId = chatId,
@@ -112,7 +99,6 @@ class ChatViewModel @Inject constructor(
                 )
                 chatId = botChat.id
                 saveAndUpdateChat(botChat)
-                _isLoading.value = false
             }
         }
     }
@@ -122,11 +108,10 @@ class ChatViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             dao.saveChat(chat)
         }
-        _newSessionChats.value =
-            _newSessionChats.value.copy(
-                chats = _newSessionChats.value.chats + chat,
-                consumeWhole = consumeWhole
-            )
+        _chats.value = _chats.value.copy(
+            chats = _chats.value.chats + chat,
+            consumeWhole = consumeWhole
+        )
     }
 
     fun setSwipedChat(chat: Chat?) {

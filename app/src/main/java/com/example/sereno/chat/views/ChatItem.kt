@@ -45,7 +45,6 @@ class ChatItem @JvmOverloads constructor(
         styles.recycle()
     }
 
-
     fun setChatText(chat: Chat, replayChat: Chat? = null) {
         binding.response.text = chat.message
         binding.replay.text = replayChat?.message
