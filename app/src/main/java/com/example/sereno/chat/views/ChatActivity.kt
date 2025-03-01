@@ -211,7 +211,6 @@ class ChatActivity : AppCompatActivity() {
         binding.chats.scrollToPosition(chatAdapter.itemCount - 1)
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         binding.root.viewTreeObserver.removeOnGlobalLayoutListener { }

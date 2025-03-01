@@ -8,6 +8,7 @@ object DateUtils {
     private val DAY_FORMAT = SimpleDateFormat("EEEE", Locale.getDefault())
     private val DATE_FORMAT = SimpleDateFormat("EEE, d MMM", Locale.getDefault())
     private val DATE_WITH_YEAR_FORMAT = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
+    private val DATE_AND_TIME_FORMAT = SimpleDateFormat("EEE, d MMM yyyy hh:mm a", Locale.getDefault())
 
      fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
@@ -20,6 +21,14 @@ object DateUtils {
             add(Calendar.DAY_OF_YEAR, -6)
         }
         return chatDate.after(sixDaysAgo) && chatDate.before(today)
+    }
+
+    fun formatDateAndTime(timestamp: Long):String{
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+        }
+
+        return DATE_AND_TIME_FORMAT.format(calendar.time)
     }
 
     fun formatDate(timestamp: Long): String {

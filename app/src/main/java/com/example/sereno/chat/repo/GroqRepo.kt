@@ -5,6 +5,7 @@ import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.ChatRequest
 import com.example.sereno.chat.model.GroqResponse
 import com.example.sereno.chat.model.Message
+import com.example.sereno.common.utils.DateUtils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -57,8 +58,7 @@ class GroqRepo @Inject constructor(
         replyTo: Chat?
     ): String {
         val systemPrompt =
-            """Replay in one line, with emoji, like a humans casual chat.
-  """.trimIndent()
+            """Reply in a single casual line with emojis, like a human chat. You'll receive metadata with each message—use it for better context, but don’t show it to the user""".trimIndent()
 
         val userMessage = if (replyTo != null) {
             "Regarding our previous conversation: '${replyTo.message}', I also wanted to add: $inputSentence"
@@ -73,7 +73,11 @@ class GroqRepo @Inject constructor(
             messages.add(
                 Message(
                     role = if (chat.isBot) "assistant" else "user",
-                    content = chat.message
+                    content = chat.message + ", metadata: date_and_time : ${
+                        DateUtils.formatDateAndTime(
+                            chat.createdAt
+                        )
+                    }"
                 )
             )
         }

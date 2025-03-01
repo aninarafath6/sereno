@@ -43,7 +43,6 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
-
         }
 
         return vh
@@ -60,7 +59,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int = chats.size
 
     private fun shouldShowDateSeparator(current: Chat, previous: Chat?): Boolean {
-        if (previous == null) return true // for the first chat , we always show date before that chat.
+        if (previous == null) return true
 
 
         val currentCalendar = Calendar.getInstance().apply {
