@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.R
 import com.example.sereno.chat.adapter.ChatAdapter
 import com.example.sereno.chat.events.ChatEvent
@@ -27,6 +28,10 @@ class ChatActivity : AppCompatActivity() {
     private val vm: ChatViewModel by viewModels()
     private val chatAdapter = ChatAdapter()
 
+    companion object {
+        private const val ANIMATION_DURATION = 400L
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.statusBarColor = getColor(R.color.primary)
@@ -34,8 +39,36 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initListeners()
-        initChats()
+        initChatsRecyclerView()
         initObservers()
+    }
+
+    private fun initChatsRecyclerView() {
+        binding.chats.adapter = chatAdapter
+        binding.chats.layoutManager = LinearLayoutManager(this)
+        binding.chats.setHasFixedSize(true)
+        vm.onEvent(ChatEvent.LoadChats)
+
+        chatAdapter.setScrollListener { position ->
+            binding.chats.smoothScrollToPosition(position)
+        }
+        binding.chats.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                val itemCount = recyclerView.adapter?.itemCount ?: 0
+
+                // Show button when not at bottom (with threshold of 2 items)
+                val isNearBottom = lastVisibleItemPosition >= itemCount - 3
+
+                if (isNearBottom) hideFloatingScrollButton() else showFloatingScrollButton()
+            }
+        })
+
+        val itemTouchHelper = ItemTouchHelper(ReplaySwiperHelper(chatAdapter, ::onSwipeChat))
+        itemTouchHelper.attachToRecyclerView(binding.chats)
     }
 
     private fun initListeners() {
@@ -53,20 +86,9 @@ class ChatActivity : AppCompatActivity() {
         binding.field.releaseReplay.onClickWithHaptics {
             vm.setSwipedChat(null)
         }
-    }
-
-    private fun initChats() {
-        binding.chats.adapter = chatAdapter
-        binding.chats.layoutManager = LinearLayoutManager(this)
-        binding.chats.setHasFixedSize(true)
-        vm.onEvent(ChatEvent.LoadChats)
-
-        chatAdapter.setScrollListener { position ->
-            binding.chats.smoothScrollToPosition(position)
+        binding.goToBottom.root.onClickWithHaptics {
+            scrollToBottom(true)
         }
-
-        val itemTouchHelper = ItemTouchHelper(ReplaySwiperHelper(chatAdapter, ::onSwipeChat))
-        itemTouchHelper.attachToRecyclerView(binding.chats)
     }
 
     private fun initObservers() {
@@ -121,8 +143,13 @@ class ChatActivity : AppCompatActivity() {
         vm.setSwipedChat(null)
     }
 
-    private fun scrollToBottom() {
-        binding.chats.scrollToPosition(chatAdapter.itemCount - 1)
+    private fun scrollToBottom(smooth: Boolean = false) {
+        val pos = chatAdapter.itemCount - 1
+        if (smooth) {
+            binding.chats.smoothScrollToPosition(pos)
+        } else {
+            binding.chats.scrollToPosition(pos)
+        }
     }
 
     override fun onDestroy() {
@@ -135,5 +162,21 @@ class ChatActivity : AppCompatActivity() {
         val chat = chatAdapter.getChat(pos)
         vm.setSwipedChat(chat)
         binding.chats.adapter?.notifyItemChanged(pos)
+    }
+
+    private fun hideFloatingScrollButton() {
+        if (!binding.goToBottom.root.isVisible) return
+        binding.goToBottom.root.translationX = 0f
+        binding.goToBottom.root.animate().translationX(200f).setDuration(ANIMATION_DURATION)
+            .withEndAction {
+                binding.goToBottom.root.isVisible = false
+            }
+    }
+
+    private fun showFloatingScrollButton() {
+        if (binding.goToBottom.root.isVisible) return
+        binding.goToBottom.root.isVisible = true
+        binding.goToBottom.root.translationX = 200f
+        binding.goToBottom.root.animate().translationX(0f).setDuration(ANIMATION_DURATION).start()
     }
 }
