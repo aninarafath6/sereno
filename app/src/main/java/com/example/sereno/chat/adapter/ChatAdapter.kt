@@ -113,4 +113,19 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         chats.add(ChatItemContent.Loading)
         notifyItemInserted(chats.lastIndex)
     }
+
+    fun isBot(position: Int): Boolean {
+        val items = chats.getOrNull(position)
+        return items is ChatItemContent.ChatItem && items.chat.isBot
+    }
+
+    fun isSwipeable(position: Int): Boolean {
+        val items = chats.getOrNull(position)
+        return items is ChatItemContent.ChatItem
+    }
+
+    fun getChat(pos: Int): Chat? {
+        val chat = chats.getOrNull(pos)
+        return if (chat is ChatItemContent.ChatItem) chat.chat else null
+    }
 }

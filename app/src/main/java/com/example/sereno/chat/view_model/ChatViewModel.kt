@@ -89,7 +89,6 @@ class ChatViewModel @Inject constructor(
         var chatId = botResponse.replayChat
         viewModelScope.launch {
             botResponse.messages.forEach {
-                delay(800)
                 val botChat = Chat(
                     message = it,
                     replayChatId = chatId,

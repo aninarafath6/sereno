@@ -12,7 +12,7 @@ class ChatViewHolder(private val binding: ChatItemBinding) :
     fun bind(pos: Int, chats: List<ChatItemContent>) {
         resetViews()
         val chat = chats[pos] as? ChatItemContent.ChatItem ?: return
-        val shouldShowReplayUi = shouldShowReplaySection(chat.chat, getLastChat(chat.chat, chats))
+        val shouldShowReplayUi = shouldShowReplaySection(chat.chat, getLastChat(chat.chat, chats.subList(0,pos)))
         val chatView = if (chat.chat.isUser()) binding.user else binding.bot
         val replayChat = if (shouldShowReplayUi) findReplayChat(chat.chat, chats) else null
 
@@ -33,7 +33,7 @@ class ChatViewHolder(private val binding: ChatItemBinding) :
 
     private fun shouldShowReplaySection(chat: Chat, prevChat: Chat?): Boolean {
         if (chat.replayChatId == null) return false
-        if (chat.replayChatId == prevChat?.id && prevChat.isUser()) return false
+        if (chat.replayChatId == prevChat?.id) return false
         return true
     }
 

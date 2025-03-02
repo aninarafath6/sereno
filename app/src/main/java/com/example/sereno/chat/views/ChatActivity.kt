@@ -1,13 +1,8 @@
 package com.example.sereno.chat.views
 
-import android.content.res.Resources
-import android.graphics.Canvas
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.HapticFeedbackConstants
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -15,19 +10,16 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.R
 import com.example.sereno.chat.adapter.ChatAdapter
 import com.example.sereno.chat.events.ChatEvent
+import com.example.sereno.chat.utils.ReplaySwiperHelper
 import com.example.sereno.chat.view_model.ChatViewModel
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityChatBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
@@ -77,82 +69,8 @@ class ChatActivity : AppCompatActivity() {
 //            chatAdapter.blinkItemAtPos(position)
 //        }
 
-//        val itemTouchHelper =
-//            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-//                private val swipeThreshold = 40f * Resources.getSystem().displayMetrics.density
-//                override fun getMovementFlags(
-//                    recyclerView: RecyclerView,
-//                    viewHolder: RecyclerView.ViewHolder
-//                ): Int {
-//                    val position = viewHolder.adapterPosition
-//                    if (position == RecyclerView.NO_POSITION) return 0
-//
-//                    val isBotMessage = vm.chats.value.chats[position].isBot
-//                    val swipeDir = if (isBotMessage) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT
-//
-//                    return makeMovementFlags(0, swipeDir)
-//                }
-//
-//                override fun onMove(
-//                    recyclerView: RecyclerView,
-//                    viewHolder: RecyclerView.ViewHolder,
-//                    target: RecyclerView.ViewHolder
-//                ): Boolean {
-//                    return false
-//                }
-//
-//                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                    val position = viewHolder.adapterPosition
-////                    if (!chatAdapter.isChat(position)) return
-//                    if (position == RecyclerView.NO_POSITION) return
-//                    binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-////                    val chat = chatAdapter.getChat(position)
-////                    vm.setSwipedChat(chat)
-//                    binding.chats.adapter?.notifyItemChanged(position)
-//                }
-//
-//                override fun onChildDraw(
-//                    c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-//                    dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
-//                ) {
-//
-//                    val position = viewHolder.adapterPosition
-////                    if (!chatAdapter.isChat(position)) return
-////                    if (position == RecyclerView.NO_POSITION) return
-////                    val isBotMessage = chatAdapter.isBot(position)
-////
-////                    val clampedDx =
-////                        if (isBotMessage) min(dX, swipeThreshold) else max(dX, -swipeThreshold)
-//
-//                    if (!isCurrentlyActive && abs(dX) > swipeThreshold) {
-//                        viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
-//                    }
-//
-//                    super.onChildDraw(
-//                        c,
-//                        recyclerView,
-//                        viewHolder,
-//                        0f,// Todo:fix
-//                        dY,
-//                        actionState,
-//                        isCurrentlyActive
-//                    )
-//                }
-//
-//                override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-//                    return .1f
-//                }
-//
-//                override fun clearView(
-//                    recyclerView: RecyclerView,
-//                    viewHolder: RecyclerView.ViewHolder
-//                ) {
-//                    super.clearView(recyclerView, viewHolder)
-//                    viewHolder.itemView.animate().translationX(0f).setDuration(200).start()
-//                }
-//            })
-//
-//        itemTouchHelper.attachToRecyclerView(binding.chats)
+        val itemTouchHelper = ItemTouchHelper(ReplaySwiperHelper(chatAdapter, ::onSwipeChat))
+        itemTouchHelper.attachToRecyclerView(binding.chats)
     }
 
     private fun initObservers() {
@@ -214,5 +132,12 @@ class ChatActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         binding.root.viewTreeObserver.removeOnGlobalLayoutListener { }
+    }
+
+    fun onSwipeChat(pos: Int) {
+        binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        val chat = chatAdapter.getChat(pos)
+        vm.setSwipedChat(chat)
+        binding.chats.adapter?.notifyItemChanged(pos)
     }
 }
