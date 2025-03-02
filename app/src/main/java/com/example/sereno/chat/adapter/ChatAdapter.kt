@@ -18,7 +18,7 @@ import java.util.Calendar
 
 class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val chats = mutableListOf<ChatItemContent>()
-    private var scrollToPosition: ((position: Int, smoothScroll: Boolean) -> Unit)? = null
+    private var scrollToPosition: ((position: Int) -> Unit)? = null
     private var blinkAtPosition: Int? = null
 
     override fun getItemViewType(position: Int): Int {
@@ -51,7 +51,24 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is LoadingViewHolder -> {}
-            is ChatViewHolder -> holder.bind(position, chats)
+            is ChatViewHolder -> {
+                holder.bind(
+                    position,
+                    chats,
+                    position == blinkAtPosition,
+                    onClickChat = { id ->
+                        if (id == null) return@bind
+                        val posOfReplayChat =
+                            chats.indexOfLast { it is ChatItemContent.ChatItem && it.chat.id == id }
+                        blinkAtPosition = posOfReplayChat
+                        scrollToPosition?.invoke(posOfReplayChat)
+                        notifyItemChanged(posOfReplayChat)
+                    },
+                    clearBlinkAnimation = {
+                        blinkAtPosition = null
+                    })
+            }
+
             is DateViewHolder -> holder.bind((chats[position] as ChatItemContent.DateItem).formattedDate)
         }
     }
@@ -127,5 +144,9 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun getChat(pos: Int): Chat? {
         val chat = chats.getOrNull(pos)
         return if (chat is ChatItemContent.ChatItem) chat.chat else null
+    }
+
+    fun setScrollListener(listener: ((position: Int) -> Unit)?) {
+        this.scrollToPosition = listener
     }
 }

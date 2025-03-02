@@ -12,7 +12,6 @@ import com.example.sereno.chat.repo.GroqRepo
 import com.example.sereno.chat.repo.room.ChatsDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -116,6 +115,7 @@ class ChatViewModel @Inject constructor(
     fun setSwipedChat(chat: Chat?) {
         _selectedChat.value = chat
     }
+
 
     companion object {
         private val NEW_BOT_CHAT = Chat(

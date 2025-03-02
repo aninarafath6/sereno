@@ -60,14 +60,10 @@ class ChatActivity : AppCompatActivity() {
         binding.chats.layoutManager = LinearLayoutManager(this)
         binding.chats.setHasFixedSize(true)
         vm.onEvent(ChatEvent.LoadChats)
-//        chatAdapter.setScrollToPositionListener { position, smoothScroll ->
-//            if (smoothScroll) {
-//                binding.chats.smoothScrollToPosition(position)
-//            } else {
-//                binding.chats.scrollToPosition(position)
-//            }
-//            chatAdapter.blinkItemAtPos(position)
-//        }
+
+        chatAdapter.setScrollListener { position ->
+            binding.chats.smoothScrollToPosition(position)
+        }
 
         val itemTouchHelper = ItemTouchHelper(ReplaySwiperHelper(chatAdapter, ::onSwipeChat))
         itemTouchHelper.attachToRecyclerView(binding.chats)
