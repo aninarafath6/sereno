@@ -53,8 +53,8 @@ class ChatViewHolder(private val binding: ChatItemBinding) :
 
     private fun shouldShowReplaySection(chat: Chat, prevChat: Chat?): Boolean {
         if (chat.replayChatId == null) return false
-        if (chat.replayChatId == prevChat?.id) return false
-        return true
+        if (chat.isUser()) return true
+        return prevChat?.id != chat.replayChatId
     }
 
     private fun findReplayChat(chat: Chat, chats: List<ChatItemContent>): Chat? {
