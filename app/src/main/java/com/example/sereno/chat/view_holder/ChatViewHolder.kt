@@ -8,8 +8,7 @@ import com.example.sereno.chat.model.isUser
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ChatItemBinding
 
-class ChatViewHolder(private val binding: ChatItemBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+class ChatViewHolder(private val binding: ChatItemBinding):RecyclerView.ViewHolder(binding.root) {
 
     fun bind(
         pos: Int,

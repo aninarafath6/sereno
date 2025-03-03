@@ -2,6 +2,7 @@ package com.example.sereno.chat.view_model
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,8 +14,6 @@ import com.example.sereno.chat.repo.room.ChatsDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -27,13 +26,17 @@ class ChatViewModel @Inject constructor(
 
     private val _isLoading = MutableLiveData(false)
     private val _selectedChat = MutableLiveData<Chat?>()
-    private val _chats = MutableStateFlow(ChatState())
+    private val _oldChats = MutableLiveData<ChatState>()
+    private val _newChats = MutableLiveData<ChatState>()
     private val botResponseQueue = ArrayDeque<Chat>()
     private var isProcessingChats = false
 
     val isLoading: LiveData<Boolean> = _isLoading
     val selectedChat: LiveData<Chat?> = _selectedChat
-    val chats: StateFlow<ChatState> = _chats
+    val chats = MediatorLiveData<ChatState>().apply {
+        addSource(_oldChats) {}
+        addSource(_newChats) {}
+    }
 
     fun sendMessage(context: Context, composedMessage: String) {
         if (composedMessage.trim().isBlank()) return
@@ -48,11 +51,14 @@ class ChatViewModel @Inject constructor(
             saveAndUpdateChat(userChat)
 
             val replayTo = if (userChat.replayChatId != null) {
-                chats.value.chats.lastOrNull { it.id == userChat.replayChatId }
+                chats.value?.chats?.lastOrNull { it.id == userChat.replayChatId }
             } else null
 
             _isLoading.value = true
             withContext(Dispatchers.IO) {
+                val contextChats = if ((chats.value?.chats?.size
+                        ?: 0) < contextChatWindowSize
+                ) chats.value?.chats else chats.value?.chats?.
                 val chatResponse =
                     groqRepo.chat(
                         context,
@@ -80,7 +86,7 @@ class ChatViewModel @Inject constructor(
     fun loadChats() {
         viewModelScope.launch {
             val chats = withContext(Dispatchers.IO) { dao.getChats() }
-            _chats.value = ChatState(chats, consumeWhole = true)
+            _oldChats.value = ChatState(chats, consumeWhole = true)
             if (chats.isEmpty()) {
                 saveAndUpdateChat(NEW_BOT_CHAT, consumeWhole = true)
             }
@@ -113,8 +119,8 @@ class ChatViewModel @Inject constructor(
             dao.saveChat(chat)
         }
         withContext(Dispatchers.Main) {
-            _chats.value = _chats.value.copy(
-                chats = _chats.value.chats + chat,
+            _newChats.value = _newChats.value?.copy(
+                chats = _newChats.value?.chats?.plus(chat) ?: listOf(chat),
                 consumeWhole = consumeWhole
             )
         }
@@ -130,6 +136,6 @@ class ChatViewModel @Inject constructor(
             isBot = true,
             createdAt = System.currentTimeMillis()
         )
+        private const val contextChatWindowSize = 50
     }
 }
-

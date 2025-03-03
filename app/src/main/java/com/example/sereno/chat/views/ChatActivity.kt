@@ -91,16 +91,14 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        lifecycleScope.launch {
-            vm.chats.collectLatest {
-                if (it.consumeWhole) {
-                    chatAdapter.setChats(it.chats)
-                } else {
-                    chatAdapter.addChat(it.chats.lastOrNull() ?: return@collectLatest)
-                    binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                }
-                scrollToBottom()
+        vm.chats.observe(this) {
+            if (it.consumeWhole) {
+                chatAdapter.setChats(it.chats)
+            } else {
+                chatAdapter.addChat(it.chats.lastOrNull() ?: return@observe)
+                binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             }
+            scrollToBottom()
         }
 
         vm.isLoading.observe(this) {

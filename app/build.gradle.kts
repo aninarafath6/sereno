@@ -96,5 +96,8 @@ dependencies {
     testImplementation("androidx.room:room-testing:2.5.2")
 
     implementation ("com.airbnb.android:lottie:3.5.0")
+    implementation ("androidx.work:work-runtime:2.7.0")
+    implementation("androidx.work:work-runtime-ktx:2.3.1")
+
 
 }
