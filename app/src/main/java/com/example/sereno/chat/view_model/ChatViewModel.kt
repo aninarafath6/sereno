@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sereno.chat.events.ChatEvent
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.ChatState
 import com.example.sereno.chat.repo.ChatResponse
@@ -12,6 +11,7 @@ import com.example.sereno.chat.repo.GroqRepo
 import com.example.sereno.chat.repo.room.ChatsDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,54 +27,48 @@ class ChatViewModel @Inject constructor(
     private val _isLoading = MutableLiveData(false)
     private val _selectedChat = MutableLiveData<Chat?>()
     private val _chats = MutableStateFlow(ChatState())
+    private val botResponseQueue = ArrayDeque<Chat>()
+    private var isProcessingChats = false
 
     val isLoading: LiveData<Boolean> = _isLoading
     val selectedChat: LiveData<Chat?> = _selectedChat
     val chats: StateFlow<ChatState> = _chats
 
-    fun onEvent(event: ChatEvent) {
-        when (event) {
-            is ChatEvent.BotResponded -> handleBotResponse(event)
-            ChatEvent.LoadChats -> loadChats()
-            is ChatEvent.SendMessage -> sendMessage(event)
-            is ChatEvent.SwipeToReplay -> {}
-        }
-    }
-
-    private fun sendMessage(event: ChatEvent.SendMessage) {
-        if (event.message.trim().isBlank()) return
-
+    fun sendMessage(composedMessage: String) {
+        if (composedMessage.trim().isBlank()) return
         viewModelScope.launch {
             val userChat = Chat(
-                message = event.message.trim(),
+                message = composedMessage,
                 replayChatId = _selectedChat.value?.id,
                 isBot = false,
                 createdAt = System.currentTimeMillis()
             )
+
             saveAndUpdateChat(userChat)
-            _isLoading.value = true
 
             val replayTo = if (userChat.replayChatId != null) {
                 chats.value.chats.lastOrNull { it.id == userChat.replayChatId }
             } else null
 
+            _isLoading.value = true
             withContext(Dispatchers.IO) {
                 val response = when (val chatResponse =
                     groqRepo.chat(
-                        userChat.message,
-                        contextChat = _chats.value.chats.subList(0, _chats.value.chats.size - 2),
+                        userChat,
+                        contextChat = _chats.value.chats.subList(0, _chats.value.chats.size - 1),
                         replayTo
                     )) {
-                    is ChatResponse.Failed -> listOf("Sorry, I'm not able to respond to that.")
+                    is ChatResponse.Failed -> listOf(Chat.generateErrorChat("Sorry, I'm not able to respond to that."))
                     is ChatResponse.Success -> chatResponse.response
                 }
-                onEvent(ChatEvent.BotResponded(response, replayChat = userChat.id))
+                enQueueChat(response)
             }
+            _isLoading.value = false
             _selectedChat.value = null
         }
     }
 
-    private fun loadChats() {
+    fun loadChats() {
         viewModelScope.launch {
             val chats = withContext(Dispatchers.IO) { dao.getChats() }
             _chats.value = ChatState(chats, consumeWhole = true)
@@ -84,20 +78,23 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun handleBotResponse(botResponse: ChatEvent.BotResponded) {
-        var chatId = botResponse.replayChat
+    private fun enQueueChat(chat: List<Chat>) {
+        botResponseQueue.addAll(chat)
+        if (isProcessingChats) return
+        processChats()
+    }
+
+    private fun processChats() {
+        isProcessingChats = true
         viewModelScope.launch {
-            botResponse.messages.forEach {
-                val botChat = Chat(
-                    message = it,
-                    replayChatId = chatId,
-                    isBot = true,
-                    createdAt = System.currentTimeMillis()
-                )
-                chatId = botChat.id
-                saveAndUpdateChat(botChat)
+            while (botResponseQueue.isNotEmpty()) {
+                _isLoading.value = true
+                delay(1000)
+                _isLoading.value = false
+                val chat = botResponseQueue.removeFirst()
+                saveAndUpdateChat(chat)
             }
-            _isLoading.value = false
+            isProcessingChats = false
         }
     }
 
@@ -106,16 +103,17 @@ class ChatViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             dao.saveChat(chat)
         }
-        _chats.value = _chats.value.copy(
-            chats = _chats.value.chats + chat,
-            consumeWhole = consumeWhole
-        )
+        withContext(Dispatchers.Main) {
+            _chats.value = _chats.value.copy(
+                chats = _chats.value.chats + chat,
+                consumeWhole = consumeWhole
+            )
+        }
     }
 
     fun setSwipedChat(chat: Chat?) {
         _selectedChat.value = chat
     }
-
 
     companion object {
         private val NEW_BOT_CHAT = Chat(

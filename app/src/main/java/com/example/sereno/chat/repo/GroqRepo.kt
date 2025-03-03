@@ -23,11 +23,11 @@ class GroqRepo @Inject constructor(
     private val client: OkHttpClient = OkHttpClient()
 ) {
     companion object {
-        private const val TAG = "GroqRepo"
         private const val GROQ_API_KEY = "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"
         private const val GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
         private const val MODEL_NAME = "llama-3.3-70b-versatile"
         private val JSON_MEDIA_TYPE = "application/json".toMediaType()
+        private const val TAG = "ChatRepository"
     }
 
     private val moshi = Moshi.Builder().build()
@@ -38,14 +38,14 @@ class GroqRepo @Inject constructor(
         moshi.adapter(GroqResponse::class.java)
 
     suspend fun chat(
-        sentence: String,
+        userChat: Chat,
         contextChat: List<Chat> = emptyList(),
         replyTo: Chat? = null
     ): ChatResponse = withContext(Dispatchers.IO) {
         try {
-            val requestBody = buildRequestBody(sentence, contextChat, replyTo)
+            val requestBody = buildRequestBody(userChat.message, contextChat, replyTo)
             val request = buildRequest(requestBody)
-            executeRequest(request)
+            executeRequest(request, userChat.id)
         } catch (e: Exception) {
             Log.e(TAG, "Error in chat method", e)
             ChatResponse.Failed(e.message ?: "Unexpected error occurred")
@@ -103,7 +103,7 @@ class GroqRepo @Inject constructor(
             .build()
     }
 
-    private fun executeRequest(request: Request): ChatResponse {
+    private fun executeRequest(request: Request, replyToUser: String): ChatResponse {
         return try {
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
@@ -112,7 +112,7 @@ class GroqRepo @Inject constructor(
 
                 val responseBody =
                     response.body?.string() ?: return ChatResponse.Failed("Empty response body")
-                parseResponse(responseBody)
+                parseResponse(responseBody, replyToUser)
             }
         } catch (e: IOException) {
             Log.e(TAG, "Network error", e)
@@ -123,7 +123,7 @@ class GroqRepo @Inject constructor(
         }
     }
 
-    private fun parseResponse(responseBody: String): ChatResponse {
+    private fun parseResponse(responseBody: String, replyToUser: String): ChatResponse {
         return try {
             val groqResponse = chatResponseAdapter.fromJson(responseBody)
                 ?: return ChatResponse.Failed("Failed to parse response")
@@ -131,18 +131,39 @@ class GroqRepo @Inject constructor(
             val content = groqResponse.choices.firstOrNull()?.message?.content
                 ?: return ChatResponse.Failed("No message content in response")
 
-            Log.d(TAG, "Parsed: ${groqResponse.choices} ")
-            val parsedParagraph = content.split("\n").filter { it.isNotBlank() }
-            ChatResponse.Success(parsedParagraph)
+            val parsedParagraphs = content.split("\n").filter { it.isNotBlank() }
+            val chats = createChainedChats(parsedParagraphs, replyToUser)
+
+            ChatResponse.Success(chats)
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing response", e)
             ChatResponse.Failed("Failed to parse response: ${e.message}")
         }
+    }
+
+    private fun createChainedChats(
+        paragraphs: List<String>,
+        initialReplayChatId: String?
+    ): List<Chat> {
+        val chats = mutableListOf<Chat>()
+        var currentReplayChatId = initialReplayChatId
+
+        paragraphs.forEach { paragraph ->
+            val newChat = Chat(
+                message = paragraph,
+                isBot = true,
+                replayChatId = currentReplayChatId,
+                createdAt = System.currentTimeMillis()
+            )
+            chats.add(newChat)
+            currentReplayChatId = newChat.id
+        }
+        return chats
     }
 }
 
 
 sealed class ChatResponse {
     data class Failed(val message: String) : ChatResponse()
-    data class Success(val response: List<String>) : ChatResponse()
+    data class Success(val response: List<Chat>) : ChatResponse()
 }

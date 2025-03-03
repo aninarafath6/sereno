@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.R
 import com.example.sereno.chat.adapter.ChatAdapter
-import com.example.sereno.chat.events.ChatEvent
 import com.example.sereno.chat.utils.ReplaySwiperHelper
 import com.example.sereno.chat.view_model.ChatViewModel
 import com.example.sereno.common.extensions.onClickWithHaptics
@@ -47,7 +46,7 @@ class ChatActivity : AppCompatActivity() {
         binding.chats.adapter = chatAdapter
         binding.chats.layoutManager = LinearLayoutManager(this)
         binding.chats.setHasFixedSize(true)
-        vm.onEvent(ChatEvent.LoadChats)
+        vm.loadChats()
 
         chatAdapter.setScrollListener { position ->
             binding.chats.smoothScrollToPosition(position)
@@ -138,7 +137,7 @@ class ChatActivity : AppCompatActivity() {
     private fun sendMessage(view: View) {
         binding.chats.scrollToPosition(chatAdapter.itemCount - 1)
         val composedMessage = binding.field.et.text.toString()
-        vm.onEvent(ChatEvent.SendMessage(composedMessage))
+        vm.sendMessage(composedMessage)
         binding.field.et.text.clear()
         vm.setSwipedChat(null)
     }

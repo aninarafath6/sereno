@@ -10,13 +10,23 @@ import java.util.UUID
 data class Chat(
     val message: String,
     val isBot: Boolean,
-    val isNewChat: Boolean = true,
     val isSynced: Boolean = false,
     val replayChatId: String? = null,
     val createdAt: Long,
     val isContextRelevant: Boolean = true,
     @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString(),
-)
+) {
+    companion object {
+        fun generateErrorChat(message: String): Chat {
+            return Chat(
+                message,
+                isBot = true,
+                isContextRelevant = false,
+                createdAt = System.currentTimeMillis()
+            )
+        }
+    }
+}
 
 fun Chat.isUser(): Boolean = !isBot
