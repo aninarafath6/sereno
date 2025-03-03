@@ -7,7 +7,6 @@ import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.ChatRequest
 import com.example.sereno.chat.model.GroqResponse
 import com.example.sereno.chat.model.Message
-import com.example.sereno.common.utils.DateUtils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -74,11 +73,7 @@ class GroqRepo @Inject constructor(
             messages.add(
                 Message(
                     role = if (chat.isBot) "assistant" else "user",
-                    content = chat.message + ", metadata: date_and_time : ${
-                        DateUtils.formatDateAndTime(
-                            chat.createdAt
-                        )
-                    }"
+                    content = chat.message
                 )
             )
         }
@@ -162,7 +157,6 @@ class GroqRepo @Inject constructor(
         return chats
     }
 }
-
 
 sealed class ChatResponse {
     data class Failed(val message: String) : ChatResponse()
