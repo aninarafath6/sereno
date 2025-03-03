@@ -58,7 +58,13 @@ class ChatViewModel @Inject constructor(
                         contextChat = _chats.value.chats.subList(0, _chats.value.chats.size - 1),
                         replayTo
                     )) {
-                    is ChatResponse.Failed -> listOf(Chat.generateErrorChat("Sorry, I'm not able to respond to that."))
+                    is ChatResponse.Failed -> listOf(
+                        Chat.generateErrorChat(
+                            "Sorry, I'm not able to respond to that.",
+                            userChat.id
+                        )
+                    )
+
                     is ChatResponse.Success -> chatResponse.response
                 }
                 enQueueChat(response)

@@ -18,11 +18,12 @@ data class Chat(
     val id: String = UUID.randomUUID().toString(),
 ) {
     companion object {
-        fun generateErrorChat(message: String): Chat {
+        fun generateErrorChat(message: String, replayChatId: String?): Chat {
             return Chat(
                 message,
                 isBot = true,
                 isContextRelevant = false,
+                replayChatId = replayChatId,
                 createdAt = System.currentTimeMillis()
             )
         }
