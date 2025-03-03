@@ -1,5 +1,6 @@
 package com.example.sereno.chat.view_model
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,7 +35,7 @@ class ChatViewModel @Inject constructor(
     val selectedChat: LiveData<Chat?> = _selectedChat
     val chats: StateFlow<ChatState> = _chats
 
-    fun sendMessage(composedMessage: String) {
+    fun sendMessage(context: Context, composedMessage: String) {
         if (composedMessage.trim().isBlank()) return
         viewModelScope.launch {
             val userChat = Chat(
@@ -52,15 +53,17 @@ class ChatViewModel @Inject constructor(
 
             _isLoading.value = true
             withContext(Dispatchers.IO) {
-                val response = when (val chatResponse =
+                val chatResponse =
                     groqRepo.chat(
+                        context,
                         userChat,
                         contextChat = _chats.value.chats.subList(0, _chats.value.chats.size - 1),
                         replayTo
-                    )) {
+                    )
+                val response = when (chatResponse) {
                     is ChatResponse.Failed -> listOf(
                         Chat.generateErrorChat(
-                            "Sorry, I'm not able to respond to that.",
+                            chatResponse.message,
                             userChat.id
                         )
                     )

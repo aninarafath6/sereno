@@ -137,7 +137,7 @@ class ChatActivity : AppCompatActivity() {
     private fun sendMessage(view: View) {
         binding.chats.scrollToPosition(chatAdapter.itemCount - 1)
         val composedMessage = binding.field.et.text.toString()
-        vm.sendMessage(composedMessage)
+        vm.sendMessage(this, composedMessage)
         binding.field.et.text.clear()
         vm.setSwipedChat(null)
     }

@@ -1,6 +1,8 @@
 package com.example.sereno.chat.repo
 
+import android.content.Context
 import android.util.Log
+import com.example.sereno.R
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.ChatRequest
 import com.example.sereno.chat.model.GroqResponse
@@ -23,7 +25,7 @@ class GroqRepo @Inject constructor(
     private val client: OkHttpClient = OkHttpClient()
 ) {
     companion object {
-        private const val GROQ_API_KEY = "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"
+        private const val GROQ_API_KEY = "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"
         private const val GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
         private const val MODEL_NAME = "llama-3.3-70b-versatile"
         private val JSON_MEDIA_TYPE = "application/json".toMediaType()
@@ -38,12 +40,13 @@ class GroqRepo @Inject constructor(
         moshi.adapter(GroqResponse::class.java)
 
     suspend fun chat(
+        context: Context,
         userChat: Chat,
         contextChat: List<Chat> = emptyList(),
         replyTo: Chat? = null
     ): ChatResponse = withContext(Dispatchers.IO) {
         try {
-            val requestBody = buildRequestBody(userChat.message, contextChat, replyTo)
+            val requestBody = buildRequestBody(userChat.message, contextChat, replyTo, context)
             val request = buildRequest(requestBody)
             executeRequest(request, userChat.id)
         } catch (e: Exception) {
@@ -55,11 +58,9 @@ class GroqRepo @Inject constructor(
     private fun buildRequestBody(
         inputSentence: String,
         contextChats: List<Chat>,
-        replyTo: Chat?
+        replyTo: Chat?,
+        context: Context
     ): String {
-        val systemPrompt =
-            """Reply in a single casual line with emojis, like a human chat. You'll receive metadata with each message—use it for better context, but don’t show it to the user""".trimIndent()
-
         val userMessage = if (replyTo != null) {
             "Regarding our previous conversation: '${replyTo.message}', I also wanted to add: $inputSentence"
         } else {
@@ -67,7 +68,7 @@ class GroqRepo @Inject constructor(
         }
 
         val messages = mutableListOf<Message>()
-        messages.add(Message(role = "system", content = systemPrompt))
+        messages.add(Message(role = "system", content = context.getString(R.string.system_prompt)))
 
         contextChats.forEach { chat ->
             messages.add(
