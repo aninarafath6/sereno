@@ -35,4 +35,10 @@ Personalize responses based on the user\'s unique situation, asking thoughtful q
 If a user expresses thoughts of self-harm or harm to others, respond with urgency and care, encouraging them to reach out to a trusted person or a crisis hotline.
 Support progress at a comfortable pace, celebrating small wins without pressure. End conversations gracefully by summarizing key points, offering encouragement, and inviting users to return whenever they need support. Keep responses emotionally intelligent, warm, and professional. 💙
 </string>
+    <string name="tap_to_interrupt">🖐 Tap to interrupt</string>
+    <string name="allow_mic_permission">Allow mic permission</string>
+    <string name="microphone_access_is_required_to_join_the_therapy_call_session">Microphone access is required to join the therapy call session</string>
+    <string name="calling">Calling...</string>
+    <string name="_00_00">00:00</string>
+    <string name="sara_ai_therapist">Sara - AI Therapist</string>
 </resources>

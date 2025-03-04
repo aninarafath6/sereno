@@ -1,6 +1,6 @@
 package com.example.sereno.home
 
-import AmbientAudioManager
+import AudioManager
 import BottomSheetDialog
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
+import com.example.sereno.call.CallActivity
 import com.example.sereno.chat.views.ChatActivity
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
@@ -33,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        AmbientAudioManager.init(this, R.raw.calm_ambient)
+        AudioManager.init(this, R.raw.calm_ambient)
 
         initListeners()
         initObservers()
@@ -42,16 +43,17 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.homeHeading.volumeOnOff.muteButton.onClickWithHaptics {
-            AmbientAudioManager.toggleMute(this)
+            AudioManager.toggleMute(this)
         }
         binding.homeFeelingCard.feeling.onClickWithHaptics {
             showBottomSheet()
         }
-//        binding.homeWeekScoreCard.root.onClickWithHaptics { }
         binding.homeTherapyCard.chat.onClickWithHaptics {
             startActivity(Intent(this, ChatActivity::class.java))
         }
-        binding.homeTherapyCard.call.onClickWithHaptics { }
+        binding.homeTherapyCard.call.onClickWithHaptics {
+            CallActivity.launch(this)
+        }
         binding.homePremiumCard.root.onClickWithHaptics { }
         binding.homeAmbientModeCard.focus.onClickWithHaptics { }
         binding.homeAmbientModeCard.meditate.onClickWithHaptics { }
@@ -59,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        AmbientAudioManager.getMuteStatus().observe(this) { isMuted ->
+        AudioManager.getMuteStatus().observe(this) { isMuted ->
             val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
             binding.homeHeading.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
         }
@@ -86,13 +88,18 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        AudioManager.init(this, R.raw.calm_ambient)
+    }
+
     override fun onResume() {
         super.onResume()
-        AmbientAudioManager.toggleMute(this, shouldMute = false)
+        AudioManager.toggleMute(this, shouldMute = false)
     }
 
     override fun onPause() {
         super.onPause()
-        AmbientAudioManager.toggleMute(this, shouldMute = true)
+        AudioManager.toggleMute(this, shouldMute = true)
     }
 }

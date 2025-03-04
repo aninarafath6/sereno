@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.sereno.R
 import kotlinx.coroutines.*
 
-object AmbientAudioManager {
+object AudioManager {
     private val isMute = MutableLiveData(false)
     private var mediaPlayer: MediaPlayer? = null
     private var setCurrentRes = R.raw.rain_ambient
@@ -24,7 +24,7 @@ object AmbientAudioManager {
         }
     }
 
-    fun toggleMute(context: Context, shouldMute: Boolean) {
+    fun toggleMute(context: Context, shouldMute: Boolean, shouldFade: Boolean = true) {
         isMute.value = shouldMute
 
         if (mediaPlayer == null) {
@@ -35,24 +35,39 @@ object AmbientAudioManager {
             currentFadeJob?.cancel()
 
             if (shouldMute) {
-                currentFadeJob = fadeVolume(player, MAX_VOLUME, 0f) {
+                if (shouldFade) {
+                    currentFadeJob = fadeVolume(player, MAX_VOLUME, 0f) {
+                        player.pause()
+                    }
+                } else {
+                    player.setVolume(0f, 0f)
                     player.pause()
                 }
             } else {
-                player.setVolume(0f, 0f)
-                player.start()
-                currentFadeJob = fadeVolume(player, 0f, MAX_VOLUME)
+                if (shouldFade) {
+                    player.setVolume(0f, 0f)
+                    player.start()
+                    currentFadeJob = fadeVolume(player, 0f, MAX_VOLUME)
+                } else {
+                    player.setVolume(MAX_VOLUME, MAX_VOLUME)
+                    player.start()
+                }
             }
         }
     }
 
-    fun toggleMute(context: Context) {
-        toggleMute(context, !isMute.value!!)
+    fun toggleMute(context: Context, shouldFade: Boolean = true) {
+        toggleMute(context, !isMute.value!!, shouldFade)
     }
 
     fun getMuteStatus(): LiveData<Boolean> = isMute
 
-    private fun fadeVolume(player: MediaPlayer, startVolume: Float, targetVolume: Float, onComplete: (() -> Unit)? = null): Job {
+    private fun fadeVolume(
+        player: MediaPlayer,
+        startVolume: Float,
+        targetVolume: Float,
+        onComplete: (() -> Unit)? = null
+    ): Job {
         return scope.launch {
             val stepDelay = FADE_DURATION / FADE_STEPS
             val volumeStep = (targetVolume - startVolume) / FADE_STEPS

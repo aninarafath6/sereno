@@ -1,6 +1,6 @@
 package com.example.sereno.onboarding.views
 
-import AmbientAudioManager
+import AudioManager
 import android.content.Intent
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToHome() {
-        AmbientAudioManager.toggleMute(this, shouldMute = true)
+        AudioManager.toggleMute(this, shouldMute = true)
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
@@ -45,12 +45,12 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         setupInsets()
         vm.init(this)
-        AmbientAudioManager.init(this)
+        AudioManager.init(this)
         initAmbientVideo()
         initObservers()
 
         binding.volumeButton.muteButton.onClickWithHaptics {
-            AmbientAudioManager.toggleMute(this)
+            AudioManager.toggleMute(this)
         }
         binding.login.onClickWithHaptics {
             if (!isInternetAvailable()) {
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        AmbientAudioManager.getMuteStatus().observe(this) { isMuted ->
+        AudioManager.getMuteStatus().observe(this) { isMuted ->
             val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
             binding.volumeButton.ivMuteUnMute.setImageResource(iconRes)
         }
@@ -135,13 +135,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        AmbientAudioManager.toggleMute(this, shouldMute = true)
+        AudioManager.toggleMute(this, shouldMute = true)
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        AmbientAudioManager.toggleMute(this, shouldMute = false)
+        AudioManager.toggleMute(this, shouldMute = false)
     }
 
     override fun onDestroy() {

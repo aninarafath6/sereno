@@ -10,4 +10,5 @@
     <color name="bot_chat_bg">#04192E</color>
     <color name="replay_strip">#094B61</color>
     <color name="bot_strip_g">#01264B</color>
+    <color name="dialog_scrim">#F5000000</color>
 </resources>

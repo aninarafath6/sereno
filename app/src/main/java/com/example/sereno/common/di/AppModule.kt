@@ -2,6 +2,7 @@ package com.example.sereno.common.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.sereno.call.utils.SpeechRecognizer
 import com.example.sereno.chat.repo.GroqRepo
 import com.example.sereno.chat.repo.room.ChatsDao
 import com.example.sereno.chat.repo.room.ChatsDatabase
@@ -35,5 +36,9 @@ object AppModule {
     @Provides
     fun provideChatsDao(chatsDatabase: ChatsDatabase): ChatsDao {
         return chatsDatabase.dao
+    }
+    @Provides
+    fun provideSpeechRecognizer(): SpeechRecognizer {
+        return SpeechRecognizer()
     }
 }

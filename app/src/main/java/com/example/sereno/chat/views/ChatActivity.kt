@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.R
+import com.example.sereno.call.CallActivity
 import com.example.sereno.chat.adapter.ChatAdapter
 import com.example.sereno.chat.utils.ReplaySwiperHelper
 import com.example.sereno.chat.view_model.ChatViewModel
@@ -73,7 +74,10 @@ class ChatActivity : AppCompatActivity() {
     private fun initListeners() {
         binding.heading.back.onClickWithHaptics(::finish)
         binding.field.sendButton.setOnClickListener(::sendMessage)
+        binding.heading.call.onClickWithHaptics {
+            CallActivity.launch(this)
 
+        }
         binding.field.et.addTextChangedListener {
             if (it.toString().isNotEmpty()) {
                 showSendButton()
@@ -91,14 +95,16 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        vm.chats.observe(this) {
-            if (it.consumeWhole) {
-                chatAdapter.setChats(it.chats)
-            } else {
-                chatAdapter.addChat(it.chats.lastOrNull() ?: return@observe)
-                binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        lifecycleScope.launch {
+            vm.chats.collectLatest {
+                if (it.consumeWhole) {
+                    chatAdapter.setChats(it.chats)
+                } else {
+                    chatAdapter.addChat(it.chats.lastOrNull() ?: return@collectLatest)
+                    binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                }
+                scrollToBottom()
             }
-            scrollToBottom()
         }
 
         vm.isLoading.observe(this) {
