@@ -1,6 +1,6 @@
 package com.example.sereno.call
 
-import AudioManager
+import com.example.sereno.common.audio_manager.AudioManager
 import android.Manifest
 import android.animation.ValueAnimator
 import android.content.Context
@@ -9,11 +9,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.addListener
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnRepeat
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -23,6 +27,7 @@ import com.example.sereno.R
 import com.example.sereno.call.utils.SpeechRecognizer
 import com.example.sereno.call.view_models.CallState
 import com.example.sereno.call.view_models.CallViewModel
+import com.example.sereno.common.audio_manager.AudioSource
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityCallBinding
 import kotlinx.coroutines.Job
@@ -46,6 +51,26 @@ class CallActivity : AppCompatActivity() {
         addUpdateListener {
             val alphaValue = it.animatedValue as Float
             binding.callingLoading.alpha = alphaValue
+        }
+    }
+    private val botResponseLoadingAnimation = ValueAnimator.ofFloat(1f, 2f).apply {
+        duration = 800
+        repeatCount = ValueAnimator.INFINITE
+        repeatMode = ValueAnimator.REVERSE
+        interpolator = AccelerateDecelerateInterpolator()
+        addUpdateListener { animator ->
+            val scaleValue = animator.animatedValue as Float
+            binding.talkingPerson.scaleX = scaleValue
+            binding.talkingPerson.scaleY = scaleValue
+        }
+        addListener {
+            doOnCancel {
+                binding.talkingPerson.scaleX = 1f
+                binding.talkingPerson.scaleY = 1f
+            }
+            doOnRepeat {
+                binding.root.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            }
         }
     }
 
@@ -85,10 +110,10 @@ class CallActivity : AppCompatActivity() {
         initObservers()
         if (!SpeechRecognizer.hasMicPermission(this)) {
             requestMicPermission()
-        } else {
-            binding.permissionRational.isVisible = false
         }
-        vm.call()
+
+        vm.init(this)
+        vm.initCall()
         binding.root.post {
             binding.talkingPerson.translationY = getThirtyFivePercentOfScreenHeight()
         }
@@ -97,8 +122,9 @@ class CallActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (SpeechRecognizer.hasMicPermission(this)) {
-            binding.permissionRational.isVisible = false
+            vm.clearError()
         }
+        vm.onResume(this)
     }
 
     private fun setClickListeners() {
@@ -109,6 +135,9 @@ class CallActivity : AppCompatActivity() {
                 requestMicPermission()
             }
         }
+        binding.bottomCallActions.mute.onClickWithHaptics {
+            vm.onBotSpeakingFinished()
+        }
 
         binding.icClose.onClickWithHaptics {
             finish()
@@ -116,16 +145,34 @@ class CallActivity : AppCompatActivity() {
         binding.bottomCallActions.endCall.onClickWithHaptics {
             finish()
         }
+        binding.tapToInterrupt.root.onClickWithHaptics {
+            vm.onBotSpeakingFinished()
+        }
     }
 
     private fun initObservers() {
         vm.currentState.observe(this) { state ->
-            AudioManager.toggleMute(this, shouldMute = true, shouldFade = false)
+            AudioManager.mute(true)
+            botResponseLoadingAnimation.cancel()
+            botResponseLoadingAnimation
             when (state) {
                 is CallState.RINGING -> setRingingState()
-                is CallState.BotSpeaking -> handleBotSpeakingState(state.isFirstMessage)
+                is CallState.BotSpeaking -> handleBotSpeakingState(state)
                 is CallState.UserSpeaking -> handleUserSpeakingState()
+                CallState.BotProcessing -> {
+                    animateTalkingPerson(upwards = false)
+                    botResponseLoadingAnimation.start()
+                    binding.tapToInterrupt.root.isVisible = true
+                }
             }
+        }
+        vm.error.observe(this) {
+            binding.errorContainer.isVisible = it != null
+            binding.title.text = it?.title
+            binding.description.text = it?.description
+            binding.allowButton.text.text = it?.actionText
+            binding.allowButton.icon.isVisible = false
+            AudioManager.destroy()
         }
     }
 
@@ -134,9 +181,6 @@ class CallActivity : AppCompatActivity() {
     }
 
     private fun setRingingState() {
-        AudioManager.init(this, R.raw.ringing)
-        AudioManager.toggleMute(this, shouldMute = false, shouldFade = false)
-
         binding.apply {
             callingLoading.isVisible = true
             tapToInterrupt.root.isVisible = false
@@ -146,6 +190,9 @@ class CallActivity : AppCompatActivity() {
         }
 
         callingLoadingAlphaAnimation.start()
+        AudioManager.play(
+            this, source = AudioSource.Resource(R.raw.ringing), shouldLoop = true, shouldFade = true
+        )
     }
 
     private fun handleUserSpeakingState() {
@@ -159,17 +206,25 @@ class CallActivity : AppCompatActivity() {
         animateTalkingPerson(upwards = true)
     }
 
-    private fun handleBotSpeakingState(isFirstMessage: Boolean) {
+    private fun handleBotSpeakingState(botSpeaking: CallState.BotSpeaking) {
         binding.apply {
             root.performHapticFeedback()
             bottomCallActions.muteContainer.isVisible = true
             callingLoading.isVisible = false
             bottomCallActions.spacer.isVisible = true
-            tapToInterrupt.root.isVisible = !isFirstMessage
+            tapToInterrupt.root.isVisible = !botSpeaking.isFirstMessage
         }
 
-        if (isFirstMessage) startTimer()
+        if (botSpeaking.isFirstMessage) startTimer()
         animateTalkingPerson(upwards = false)
+        AudioManager.play(
+            this,
+            source = AudioSource.FileSource(botSpeaking.audio),
+            shouldLoop = false,
+            shouldFade = false
+        ) {
+            vm.onBotSpeakingFinished()
+        }
     }
 
     private fun View.performHapticFeedback() {
@@ -192,12 +247,12 @@ class CallActivity : AppCompatActivity() {
     private val permissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        binding.permissionRational.isVisible = !granted
         if (granted) {
             onPermissionGranted()
+            vm.clearError()
             return@registerForActivityResult
         }
-
+        vm.setPermissionGrandError()
         binding.allowButton.text.text = if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this, Manifest.permission.RECORD_AUDIO
             )
@@ -211,7 +266,7 @@ class CallActivity : AppCompatActivity() {
     }
 
     private fun onPermissionGranted() {
-        // TODO: fire event
+        // TODO: fire events
     }
 
     private fun getThirtyFivePercentOfScreenHeight(): Float {

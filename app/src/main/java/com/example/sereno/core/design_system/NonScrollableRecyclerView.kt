@@ -1,4 +1,4 @@
-package com.example.sereno.common.views
+package com.example.sereno.core.design_system
 
 import android.content.Context
 import android.util.AttributeSet

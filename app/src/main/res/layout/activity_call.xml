@@ -60,7 +60,7 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/permissionRational"
+            android:id="@+id/errorContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/dialog_scrim"
@@ -86,6 +86,7 @@
                     android:src="@drawable/ic_mic" />
 
                 <TextView
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -95,6 +96,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"

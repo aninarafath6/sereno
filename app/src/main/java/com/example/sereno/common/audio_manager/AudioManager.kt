@@ -1,42 +1,109 @@
+package com.example.sereno.common.audio_manager
+
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.sereno.R
 import kotlinx.coroutines.*
+import java.io.File
+import java.io.IOException
 
 object AudioManager {
     private val isMute = MutableLiveData(false)
     private var mediaPlayer: MediaPlayer? = null
-    private var setCurrentRes = R.raw.rain_ambient
+
     private const val FADE_DURATION = 800L
     private const val FADE_STEPS = 30
     private const val MAX_VOLUME = 0.5f
+
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var currentFadeJob: Job? = null
 
-    @Synchronized
-    fun init(context: Context, res: Int = R.raw.rain_ambient) {
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(context.applicationContext, res).apply {
-            isLooping = true
-            setVolume(0f, 0f)
+    private fun initMediaPlayer() {
+        mediaPlayer = MediaPlayer()
+    }
+
+
+    fun play(
+        context: Context,
+        source: AudioSource,
+        shouldLoop: Boolean = false,
+        shouldFade: Boolean = false,
+        onComplete: (() -> Unit)? = null
+    ) {
+        try {
+            if (mediaPlayer == null) {
+                initMediaPlayer()
+            } else {
+                mediaPlayer?.reset()
+            }
+
+            mediaPlayer?.apply {
+                when (source) {
+                    is AudioSource.Resource -> {
+                        mediaPlayer = MediaPlayer.create(context, source.resId)
+                        mediaPlayer!!.start()
+                        unMute(shouldFade)
+                    }
+
+                    is AudioSource.FileSource -> {
+                        setDataSource(source.file.absolutePath)
+                        prepare()
+                    }
+                }
+
+                isLooping = shouldLoop
+                setVolume(0f, 0f)
+                setOnPreparedListener {
+                    unMute(shouldFade)
+                }
+                setOnCompletionListener {
+                    onComplete?.invoke()
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                }
+            }
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
         }
     }
 
-    fun toggleMute(context: Context, shouldMute: Boolean, shouldFade: Boolean = true) {
-        isMute.value = shouldMute
-
-        if (mediaPlayer == null) {
-            init(context, setCurrentRes)
+    fun mute(shouldFade: Boolean) {
+        if (shouldFade) {
+            toggleMuteInternal(shouldMute = true, shouldFade = shouldFade)
+        } else {
+            mediaPlayer?.pause()
         }
+    }
 
+    fun unMute(shouldFade: Boolean) {
+        mediaPlayer?.start()
+        toggleMuteInternal(shouldMute = false, shouldFade = shouldFade)
+    }
+
+    fun toggleMute(shouldFade: Boolean = false) {
+        if (isMute.value == true) unMute(shouldFade) else mute(shouldFade)
+    }
+
+    fun destroy() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+        currentFadeJob?.cancel()
+    }
+
+    private fun toggleMuteInternal(shouldMute: Boolean, shouldFade: Boolean = true) {
+        isMute.value = shouldMute
         mediaPlayer?.let { player ->
+            player.start()
             currentFadeJob?.cancel()
 
             if (shouldMute) {
                 if (shouldFade) {
-                    currentFadeJob = fadeVolume(player, MAX_VOLUME, 0f) {
+                    currentFadeJob = fadeVolume(MAX_VOLUME, 0f) {
                         player.pause()
                     }
                 } else {
@@ -47,7 +114,7 @@ object AudioManager {
                 if (shouldFade) {
                     player.setVolume(0f, 0f)
                     player.start()
-                    currentFadeJob = fadeVolume(player, 0f, MAX_VOLUME)
+                    currentFadeJob = fadeVolume(0f, MAX_VOLUME)
                 } else {
                     player.setVolume(MAX_VOLUME, MAX_VOLUME)
                     player.start()
@@ -56,14 +123,9 @@ object AudioManager {
         }
     }
 
-    fun toggleMute(context: Context, shouldFade: Boolean = true) {
-        toggleMute(context, !isMute.value!!, shouldFade)
-    }
-
     fun getMuteStatus(): LiveData<Boolean> = isMute
 
     private fun fadeVolume(
-        player: MediaPlayer,
         startVolume: Float,
         targetVolume: Float,
         onComplete: (() -> Unit)? = null
@@ -73,12 +135,17 @@ object AudioManager {
             val volumeStep = (targetVolume - startVolume) / FADE_STEPS
 
             for (i in 0..FADE_STEPS) {
+                if (mediaPlayer == null) return@launch
                 val newVolume = (startVolume + i * volumeStep).coerceIn(0f, MAX_VOLUME)
-                player.setVolume(newVolume, newVolume)
+                mediaPlayer?.setVolume(newVolume, newVolume)
                 delay(stepDelay)
             }
             onComplete?.invoke()
         }
     }
+}
 
+sealed class AudioSource {
+    data class Resource(val resId: Int) : AudioSource()
+    data class FileSource(val file: File) : AudioSource()
 }

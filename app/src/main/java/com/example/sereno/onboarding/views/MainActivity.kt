@@ -1,6 +1,6 @@
 package com.example.sereno.onboarding.views
 
-import AudioManager
+import com.example.sereno.common.audio_manager.AudioManager
 import android.content.Intent
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.example.sereno.R
+import com.example.sereno.common.audio_manager.AudioSource
 import com.example.sereno.common.extensions.isInternetAvailable
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityMainBinding
@@ -37,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToHome() {
-        AudioManager.toggleMute(this, shouldMute = true)
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
@@ -45,12 +45,17 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         setupInsets()
         vm.init(this)
-        AudioManager.init(this)
+        AudioManager.play(
+            this,
+            source = AudioSource.Resource(R.raw.rain_ambient),
+            shouldLoop = true,
+            shouldFade = true
+        )
         initAmbientVideo()
         initObservers()
 
         binding.volumeButton.muteButton.onClickWithHaptics {
-            AudioManager.toggleMute(this)
+            AudioManager.toggleMute(true)
         }
         binding.login.onClickWithHaptics {
             if (!isInternetAvailable()) {
@@ -135,13 +140,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        AudioManager.toggleMute(this, shouldMute = true)
+        AudioManager.mute(true)
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        AudioManager.toggleMute(this, shouldMute = false)
+        AudioManager.unMute(true)
     }
 
     override fun onDestroy() {

@@ -1,6 +1,6 @@
 package com.example.sereno.home
 
-import AudioManager
+import com.example.sereno.common.audio_manager.AudioManager
 import BottomSheetDialog
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
 import com.example.sereno.call.CallActivity
 import com.example.sereno.chat.views.ChatActivity
+import com.example.sereno.common.audio_manager.AudioSource
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 import com.example.sereno.home.adapters.ArticlesAdapter
@@ -34,7 +35,6 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        AudioManager.init(this, R.raw.calm_ambient)
 
         initListeners()
         initObservers()
@@ -43,7 +43,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.homeHeading.volumeOnOff.muteButton.onClickWithHaptics {
-            AudioManager.toggleMute(this)
+            AudioManager.toggleMute(true)
         }
         binding.homeFeelingCard.feeling.onClickWithHaptics {
             showBottomSheet()
@@ -88,18 +88,19 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        AudioManager.init(this, R.raw.calm_ambient)
-    }
 
     override fun onResume() {
         super.onResume()
-        AudioManager.toggleMute(this, shouldMute = false)
+        AudioManager.play(
+            this,
+            source = AudioSource.Resource(R.raw.calm_ambient),
+            shouldLoop = true,
+            shouldFade = true
+        )
     }
 
     override fun onPause() {
         super.onPause()
-        AudioManager.toggleMute(this, shouldMute = true)
+        AudioManager.mute(true)
     }
 }

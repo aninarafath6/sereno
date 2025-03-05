@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.sereno.R
 import com.example.sereno.chat.model.Chat
-import com.example.sereno.chat.model.ChatRequest
+import com.example.sereno.chat.model.GroqRequest
 import com.example.sereno.chat.model.GroqResponse
 import com.example.sereno.chat.model.Message
 import com.squareup.moshi.JsonAdapter
@@ -16,11 +16,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class GroqRepo @Inject constructor(
+class ChatRepo(
     private val client: OkHttpClient = OkHttpClient()
 ) {
     companion object {
@@ -33,9 +30,9 @@ class GroqRepo @Inject constructor(
 
     private val moshi = Moshi.Builder().build()
 
-    private val chatRequestAdapter: JsonAdapter<ChatRequest> =
-        moshi.adapter(ChatRequest::class.java)
-    private val chatResponseAdapter: JsonAdapter<GroqResponse> =
+    private val chatRequestAdapter: JsonAdapter<GroqRequest> =
+        moshi.adapter(GroqRequest::class.java)
+    private val groqResponseAdapter: JsonAdapter<GroqResponse> =
         moshi.adapter(GroqResponse::class.java)
 
     suspend fun chat(
@@ -45,7 +42,12 @@ class GroqRepo @Inject constructor(
         replyTo: Chat? = null
     ): ChatResponse = withContext(Dispatchers.IO) {
         try {
-            val requestBody = buildRequestBody(userChat.message, contextChat, replyTo, context)
+            val requestBody = buildRequestBody(
+                userChat.message,
+                contextChat,
+                replyTo,
+                context.getString(R.string.system_prompt)
+            )
             val request = buildRequest(requestBody)
             executeRequest(request, userChat.id)
         } catch (e: Exception) {
@@ -58,7 +60,7 @@ class GroqRepo @Inject constructor(
         inputSentence: String,
         contextChats: List<Chat>,
         replyTo: Chat?,
-        context: Context
+        systemPrompt: String,
     ): String {
         val userMessage = if (replyTo != null) {
             "Regarding our previous conversation: '${replyTo.message}', I also wanted to add: $inputSentence"
@@ -67,7 +69,7 @@ class GroqRepo @Inject constructor(
         }
 
         val messages = mutableListOf<Message>()
-        messages.add(Message(role = "system", content = context.getString(R.string.system_prompt)))
+        messages.add(Message(role = "system", content = systemPrompt))
 
         contextChats.forEach { chat ->
             messages.add(
@@ -80,7 +82,7 @@ class GroqRepo @Inject constructor(
 
         messages.add(Message(role = "user", content = userMessage))
 
-        val chatRequest = ChatRequest(
+        val chatRequest = GroqRequest(
             model = MODEL_NAME,
             messages = messages
         )
@@ -121,7 +123,7 @@ class GroqRepo @Inject constructor(
 
     private fun parseResponse(responseBody: String, replyToUser: String): ChatResponse {
         return try {
-            val groqResponse = chatResponseAdapter.fromJson(responseBody)
+            val groqResponse = groqResponseAdapter.fromJson(responseBody)
                 ?: return ChatResponse.Failed("Failed to parse response")
 
             val content = groqResponse.choices.firstOrNull()?.message?.content

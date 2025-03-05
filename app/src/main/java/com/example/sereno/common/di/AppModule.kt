@@ -3,7 +3,6 @@ package com.example.sereno.common.di
 import android.content.Context
 import androidx.room.Room
 import com.example.sereno.call.utils.SpeechRecognizer
-import com.example.sereno.chat.repo.GroqRepo
 import com.example.sereno.chat.repo.room.ChatsDao
 import com.example.sereno.chat.repo.room.ChatsDatabase
 import dagger.Module
@@ -16,11 +15,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    fun provideGroqRepo(): GroqRepo {
-        return GroqRepo()
-    }
 
     @Provides
     @Singleton

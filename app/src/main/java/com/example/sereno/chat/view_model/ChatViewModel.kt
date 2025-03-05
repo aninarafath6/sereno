@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sereno.chat.model.Chat
 import com.example.sereno.chat.model.ChatState
+import com.example.sereno.chat.repo.ChatRepo
 import com.example.sereno.chat.repo.ChatResponse
-import com.example.sereno.chat.repo.GroqRepo
 import com.example.sereno.chat.repo.room.ChatsDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val groqRepo: GroqRepo,
     private val dao: ChatsDao
 ) : ViewModel() {
+    private val chatRepo: ChatRepo = ChatRepo()
 
     private val _isLoading = MutableLiveData(false)
     private val _selectedChat = MutableLiveData<Chat?>()
@@ -48,19 +48,19 @@ class ChatViewModel @Inject constructor(
             saveAndUpdateChat(userChat)
 
             val replayTo = if (userChat.replayChatId != null) {
-                chats.value?.chats?.lastOrNull { it.id == userChat.replayChatId }
+                chats.value.chats.lastOrNull { it.id == userChat.replayChatId }
             } else null
 
             _isLoading.value = true
             withContext(Dispatchers.IO) {
                 val contextChats =
-                    chats.value?.chats?.takeLast(CONTEXT_CHAT_WINDOW_SIZE) ?: emptyList()
-                val chatResponse = groqRepo.chat(
-                        context,
-                        userChat,
-                        contextChat = contextChats,
-                        replayTo
-                    )
+                    chats.value.chats.takeLast(CONTEXT_CHAT_WINDOW_SIZE) ?: emptyList()
+                val chatResponse = chatRepo.chat(
+                    context,
+                    userChat,
+                    contextChat = contextChats,
+                    replayTo
+                )
                 val response = when (chatResponse) {
                     is ChatResponse.Failed -> listOf(
                         Chat.generateErrorChat(
