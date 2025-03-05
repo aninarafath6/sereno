@@ -1,8 +1,6 @@
 package com.example.sereno.audio.audio_manager
 
 import android.content.Context
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class CallAudioManager(private val context: Context) {
     private var currentAudioSource: AudioSource? = null

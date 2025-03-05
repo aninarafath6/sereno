@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.example.sereno.chat.views.ChatItem
+    <com.example.sereno.features.chat.ui.ChatItem
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         app:owner="user"
         tools:visibility="visible" />
 
-    <com.example.sereno.chat.views.ChatItem
+    <com.example.sereno.features.chat.ui.ChatItem
         android:id="@+id/bot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

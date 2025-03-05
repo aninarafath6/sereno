@@ -7,7 +7,7 @@
     android:background="@color/primary"
     android:gravity="center"
     android:theme="@style/Base.Theme.Sereno"
-    tools:context=".onboarding.views.MainActivity">
+    tools:context=".features.onboarding.ui.MainActivity">
 
     <TextView
         android:id="@+id/onboardingTitle"

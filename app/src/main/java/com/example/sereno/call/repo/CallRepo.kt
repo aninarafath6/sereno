@@ -3,9 +3,9 @@ package com.example.sereno.call.repo
 import android.content.Context
 import android.util.Log
 import com.example.sereno.R
-import com.example.sereno.chat.model.GroqRequest
-import com.example.sereno.chat.model.GroqResponse
-import com.example.sereno.chat.model.Message
+import com.example.sereno.features.chat.domain.model.GroqRequest
+import com.example.sereno.features.chat.domain.model.GroqResponse
+import com.example.sereno.features.chat.domain.model.Message
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import java.io.File

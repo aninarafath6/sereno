@@ -5,6 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".onboarding.views.Test">
+    tools:context=".onboarding.ui.Test">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

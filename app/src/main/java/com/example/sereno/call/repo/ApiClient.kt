@@ -3,7 +3,6 @@ package com.example.sereno.call.repo
 import android.content.Context
 import android.util.Log
 import com.example.sereno.call.model.OpenAiTTsRequest
-import com.example.sereno.chat.model.GroqRequest
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import okhttp3.MediaType.Companion.toMediaType
