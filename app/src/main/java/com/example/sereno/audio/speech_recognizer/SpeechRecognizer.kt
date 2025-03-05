@@ -1,4 +1,4 @@
-package com.example.sereno.call.utils
+package com.example.sereno.audio.speech_recognizer
 
 import android.Manifest
 import android.content.Context

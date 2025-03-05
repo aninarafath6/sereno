@@ -12,6 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/close"
             android:layout_width="24dp"
@@ -41,7 +42,7 @@
         tools:itemCount="6"
         tools:listitem="@layout/feeling_bottom_sheet_item" />
 
-    <com.example.sereno.common.views.CustomButton
+    <com.example.sereno.core.design_system.CustomButton
         android:id="@+id/continueButton"
         android:layout_width="match_parent"
         android:layout_height="48dp"

@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sereno.call.repo.CallRepo
 import com.example.sereno.call.repo.CallResponse
-import com.example.sereno.call.utils.SpeechRecognizer
-import com.example.sereno.call.utils.SpeechRecognizerListener
+import com.example.sereno.audio.speech_recognizer.SpeechRecognizer
+import com.example.sereno.audio.speech_recognizer.SpeechRecognizerListener
 import com.example.sereno.common.extensions.isInternetAvailable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

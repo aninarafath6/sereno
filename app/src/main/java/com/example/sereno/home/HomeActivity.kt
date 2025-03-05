@@ -1,6 +1,6 @@
 package com.example.sereno.home
 
-import com.example.sereno.common.audio_manager.AudioManager
+import com.example.sereno.common.audio_manager.AmbientAudioManager
 import BottomSheetDialog
 import android.content.Intent
 import android.os.Bundle
@@ -11,9 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
-import com.example.sereno.call.CallActivity
+import com.example.sereno.call_.ui.CallActivity
 import com.example.sereno.chat.views.ChatActivity
-import com.example.sereno.common.audio_manager.AudioSource
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 import com.example.sereno.home.adapters.ArticlesAdapter
@@ -24,26 +23,35 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private val vm: HomeViewModel by viewModels()
     private val articlesAdapter = ArticlesAdapter()
+    private val ambientAudioManager = AmbientAudioManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
+        setupWindowInsets()
         initListeners()
         initObservers()
         initArticlesRecyclerView()
     }
 
+    private fun setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
+    }
+
     private fun initListeners() {
         binding.homeHeading.volumeOnOff.muteButton.onClickWithHaptics {
-            AudioManager.toggleMute(true)
+            ambientAudioManager.toggleMute()
         }
         binding.homeFeelingCard.feeling.onClickWithHaptics {
             showBottomSheet()
@@ -61,7 +69,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        AudioManager.getMuteStatus().observe(this) { isMuted ->
+        ambientAudioManager.getMuteStatus().observe(this) { isMuted ->
             val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
             binding.homeHeading.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
         }
@@ -74,7 +82,9 @@ class HomeActivity : AppCompatActivity() {
         articlesAdapter.setArticles(vm.getArticles())
         binding.homeArticlesCard.articles.addItemDecoration(
             ArticlesPaddingItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.spacing_24dp)
+                resources.getDimensionPixelSize(
+                    R.dimen.spacing_24dp
+                )
             )
         )
     }
@@ -91,16 +101,21 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        AudioManager.play(
+        ambientAudioManager.play(
             this,
-            source = AudioSource.Resource(R.raw.calm_ambient),
+            source = R.raw.calm_ambient,
             shouldLoop = true,
-            shouldFade = true
         )
+        ambientAudioManager.unMute()
     }
 
     override fun onPause() {
         super.onPause()
-        AudioManager.mute(true)
+        ambientAudioManager.mute()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ambientAudioManager.destroy()
     }
 }

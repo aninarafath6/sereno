@@ -2,7 +2,7 @@ package com.example.sereno.common.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.sereno.call.utils.SpeechRecognizer
+import com.example.sereno.audio.speech_recognizer.SpeechRecognizer
 import com.example.sereno.chat.repo.room.ChatsDao
 import com.example.sereno.chat.repo.room.ChatsDatabase
 import dagger.Module
