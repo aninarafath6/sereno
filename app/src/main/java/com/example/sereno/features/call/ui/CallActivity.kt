@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -111,10 +110,42 @@ class CallActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.error.collectLatest { error ->
-                    handleErrorState(error)
+
+    }
+
+    private fun handleCallState(state: CallState) {
+        stopAnimations()
+        resetViewsOnStateChange()
+        callAudioManager.stop()
+        binding.errorContainer.isVisible = false
+        when (state) {
+            is CallState.Ringing -> setRingingState()
+            is CallState.BotSpeaking -> handleBotSpeakingState(state)
+            is CallState.UserSpeaking -> handleUserSpeakingState()
+            is CallState.BotProcessing -> handleBotProcessingState()
+            is CallState.Error -> handleError(state.error)
+        }
+    }
+
+    private fun handleError(error: CallError) {
+        binding.errorContainer.isVisible = true
+        error.let {
+            binding.title.text = it.title
+            binding.description.text = it.description
+            binding.allowButton.text.text = it.actionText
+            binding.allowButton.root.onClickWithHaptics {
+                when (it.actionType) {
+                    CallErrorActionType.RETRY -> viewModel.initCall(this)
+                    CallErrorActionType.SETTINGS -> {
+                        startActivity(
+                            Intent(
+                                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                android.net.Uri.parse("package:$packageName")
+                            )
+                        )
+                    }
+
+                    CallErrorActionType.ALLOW -> requestMicPermission()
                 }
             }
         }
@@ -122,20 +153,8 @@ class CallActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.error.value != null) {
+        if (viewModel.callState.value is CallState.Error) {
             viewModel.initCall(this)
-        }
-    }
-
-    private fun handleCallState(state: CallState) {
-        stopAnimations()
-        resetViewsOnStateChange()
-        callAudioManager.stop()
-        when (state) {
-            is CallState.Ringing -> setRingingState()
-            is CallState.BotSpeaking -> handleBotSpeakingState(state)
-            is CallState.UserSpeaking -> handleUserSpeakingState()
-            is CallState.BotProcessing -> handleBotProcessingState()
         }
     }
 
@@ -176,6 +195,7 @@ class CallActivity : AppCompatActivity() {
 
     private fun setRingingState() {
         callAudioManager.destroy()
+        binding.talkingPerson.translationY = 0f
         callAudioManager.play(
             source = AudioSource.Resource(R.raw.ringing),
             shouldLoop = true,
@@ -191,32 +211,6 @@ class CallActivity : AppCompatActivity() {
         blinkAnimation.stop()
         heartBeatAnimation.stop()
         resetTalkingPersonBgHearBeatSize()
-    }
-
-    private fun handleErrorState(error: CallError?) {
-        binding.errorContainer.isVisible = error != null
-        error?.let {
-            callAudioManager.stop()
-            binding.title.text = it.title
-            binding.description.text = it.description
-            binding.allowButton.text.text = it.actionText
-            binding.allowButton.root.onClickWithHaptics {
-                when (it.actionType) {
-                    CallErrorActionType.RETRY -> viewModel.initCall(this)
-                    CallErrorActionType.SETTINGS -> {
-                        startActivity(
-                            Intent(
-                                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                android.net.Uri.parse("package:$packageName")
-                            )
-                        )
-                    }
-
-                    CallErrorActionType.ALLOW -> requestMicPermission()
-                }
-            }
-        }
-
     }
 
     private fun setTalkingPersonBg(isBot: Boolean) {

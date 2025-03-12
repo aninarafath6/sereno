@@ -34,8 +34,6 @@ class CallViewModel : ViewModel(), SpeechRecognizerListener {
         private const val ASR_RETRY_THRESHOLD = 3
     }
 
-    private val _error = MutableStateFlow<CallError?>(null)
-    val error = _error.asStateFlow()
     val callState = _callState.asStateFlow()
 
     fun init(context: Context) {
@@ -45,13 +43,13 @@ class CallViewModel : ViewModel(), SpeechRecognizerListener {
     }
 
     fun initCall(context: Activity) {
-        _error.value = null
         if (!context.hasMicPermission()) {
-            _error.value = CallError.MicrophonePermissionRequired(shouldShowRational(context))
+            _callState.value =
+                CallState.Error(CallError.MicrophonePermissionRequired(shouldShowRational(context)))
             return
         }
         if (!context.isInternetAvailable()) {
-            _error.value = CallError.NoNetwork
+            _callState.value = CallState.Error(CallError.NoNetwork)
             return
         }
         viewModelScope.launch {
@@ -77,18 +75,18 @@ class CallViewModel : ViewModel(), SpeechRecognizerListener {
     }
 
     fun onPermissionGranted(context: Activity) {
-        _error.value = null
         initCall(context)
     }
 
     fun onPermissionDenied(activity: Activity) {
-        _error.value = CallError.MicrophonePermissionRequired(shouldShowRational(activity))
+        _callState.value =
+            CallState.Error(CallError.MicrophonePermissionRequired(shouldShowRational(activity)))
     }
 
     private suspend fun handleCallResponse(response: CallResponse, isFirstMessage: Boolean) {
         when (response) {
             is CallResponse.Failed -> {
-                _error.value = response.error
+                _callState.value = CallState.Error(response.error)
             }
 
             is CallResponse.Success -> {
@@ -131,6 +129,7 @@ class CallViewModel : ViewModel(), SpeechRecognizerListener {
 }
 
 sealed class CallState {
+    data class Error(val error: CallError) : CallState()
     data object Ringing : CallState()
     data object BotProcessing : CallState()
     data object UserSpeaking : CallState()
