@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
-import com.example.sereno.features.call_.ui.CallActivity
+import com.example.sereno.features.call.ui.CallActivity
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 import com.example.sereno.features.chat.ui.ChatActivity

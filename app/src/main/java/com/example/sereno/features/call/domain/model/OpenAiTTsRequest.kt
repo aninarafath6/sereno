@@ -1,4 +1,4 @@
-package com.example.sereno.call.model
+package com.example.sereno.features.call.domain.model
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)

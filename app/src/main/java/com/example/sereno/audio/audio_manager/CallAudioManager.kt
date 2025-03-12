@@ -1,30 +1,47 @@
 package com.example.sereno.audio.audio_manager
 
 import android.content.Context
+import android.media.MediaPlayer
+import java.io.File
 
 class CallAudioManager(private val context: Context) {
-    private var currentAudioSource: AudioSource? = null
-    private var isMuted = false
+    private var mediaPlayer: MediaPlayer? = null
 
     fun play(
         source: AudioSource,
         shouldLoop: Boolean = false,
-        shouldFade: Boolean = false,
         onComplete: (() -> Unit)? = null
     ) {
-        currentAudioSource = source
+        mediaPlayer?.release()
+        when (source) {
+            is AudioSource.FileSource -> {
+                mediaPlayer = MediaPlayer()
+                mediaPlayer?.setDataSource(source.file.path)
+                mediaPlayer?.prepare()
+            }
+
+            is AudioSource.Resource -> {
+                mediaPlayer = MediaPlayer.create(context, source.resId)
+            }
+        }
+        mediaPlayer?.apply {
+            isLooping = shouldLoop
+            start()
+            setOnCompletionListener { onComplete?.invoke() }
+        }
     }
 
-    fun mute(shouldMute: Boolean) {
-        isMuted = shouldMute
+    fun stop() {
+        mediaPlayer?.stop()
     }
 
     fun destroy() {
-        currentAudioSource = null
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }
 
 sealed class AudioSource {
     data class Resource(val resId: Int) : AudioSource()
-    data class FileSource(val filePath: String) : AudioSource()
+    data class FileSource(val file: File) : AudioSource()
 }

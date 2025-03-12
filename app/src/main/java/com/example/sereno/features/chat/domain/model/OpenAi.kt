@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class GroqRequest(
+data class OpenAiRequest(
     val model: String,
     val messages: List<Message>
 )
@@ -16,7 +16,7 @@ data class Message(
 )
 
 @JsonClass(generateAdapter = true)
-data class GroqResponse(
+data class OpenAiResponse(
     val id: String,
     val choices: List<Choice>
 )

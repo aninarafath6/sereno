@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.R
-import com.example.sereno.features.call_.ui.CallActivity
+import com.example.sereno.features.call.ui.CallActivity
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityChatBinding
 import com.example.sereno.features.chat.ui.adapter.ChatAdapter

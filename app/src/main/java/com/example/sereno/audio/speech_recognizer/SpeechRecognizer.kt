@@ -1,14 +1,11 @@
 package com.example.sereno.audio.speech_recognizer
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import androidx.core.content.ContextCompat
 
 class SpeechRecognizer {
     private lateinit var speechRecognizerListener: SpeechRecognizerListener
@@ -86,15 +83,6 @@ class SpeechRecognizer {
         }
 
         speechRecognizer.startListening(recognizerIntent)
-    }
-
-    companion object {
-        fun hasMicPermission(context: Context): Boolean {
-            return ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED
-        }
     }
 }
 

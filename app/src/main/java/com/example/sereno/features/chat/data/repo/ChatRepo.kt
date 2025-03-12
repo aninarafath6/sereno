@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.example.sereno.R
 import com.example.sereno.features.chat.data.model.Chat
-import com.example.sereno.features.chat.domain.model.GroqRequest
-import com.example.sereno.features.chat.domain.model.GroqResponse
+import com.example.sereno.features.chat.domain.model.OpenAiRequest
+import com.example.sereno.features.chat.domain.model.OpenAiResponse
 import com.example.sereno.features.chat.domain.model.Message
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -30,10 +30,10 @@ class ChatRepo(
 
     private val moshi = Moshi.Builder().build()
 
-    private val chatRequestAdapter: JsonAdapter<GroqRequest> =
-        moshi.adapter(GroqRequest::class.java)
-    private val groqResponseAdapter: JsonAdapter<GroqResponse> =
-        moshi.adapter(GroqResponse::class.java)
+    private val chatRequestAdapter: JsonAdapter<OpenAiRequest> =
+        moshi.adapter(OpenAiRequest::class.java)
+    private val groqResponseAdapter: JsonAdapter<OpenAiResponse> =
+        moshi.adapter(OpenAiResponse::class.java)
 
     suspend fun chat(
         context: Context,
@@ -82,7 +82,7 @@ class ChatRepo(
 
         messages.add(Message(role = "user", content = userMessage))
 
-        val chatRequest = GroqRequest(
+        val chatRequest = OpenAiRequest(
             model = MODEL_NAME,
             messages = messages
         )

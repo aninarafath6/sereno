@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/primary"
     android:orientation="vertical"
-    tools:context=".call.CallActivity">
+    tools:context=".features.call.ui.CallActivity">
 
     <ImageView
         android:id="@+id/talkingPerson"
