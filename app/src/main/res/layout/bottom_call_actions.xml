@@ -59,7 +59,7 @@
             android:id="@+id/endCall"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:background="@drawable/call_bottom_nav_item_bg"
+            android:background="@drawable/end_call_bottom_nav_item_bg"
             android:orientation="vertical">
 
             <ImageView
