@@ -4,6 +4,7 @@
         <attr name="icon" format="reference" />
         <attr name="text" format="string" />
         <attr name="iconSize" format="dimension" />
+        <attr name="background" format="reference" />
         <attr name="size" format="enum">
             <enum name="small" value="0" />
             <enum name="normal" value="1" />

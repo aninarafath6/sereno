@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.sereno.R
 import com.example.sereno.features.call.ui.CallActivity
 import com.example.sereno.common.extensions.onClickWithHaptics
@@ -34,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
         initListeners()
         initObservers()
         initArticlesRecyclerView()
+        setUpStateOfMind()
     }
 
     private fun setupWindowInsets() {
@@ -62,7 +64,7 @@ class HomeActivity : AppCompatActivity() {
         binding.homeTherapyCard.call.onClickWithHaptics {
             CallActivity.launch(this)
         }
-        binding.homePremiumCard.root.onClickWithHaptics { }
+        binding.stateOfMindCard.root.onClickWithHaptics { }
         binding.homeAmbientModeCard.focus.onClickWithHaptics { }
         binding.homeAmbientModeCard.meditate.onClickWithHaptics { }
         binding.homeAmbientModeCard.deepSleep.onClickWithHaptics { }
@@ -87,6 +89,11 @@ class HomeActivity : AppCompatActivity() {
                 )
             )
         )
+    }
+
+    private fun setUpStateOfMind() {
+        Glide.with(this).load(vm.getLastFeelingEmotion().iconResId)
+            .into(binding.stateOfMindCard.latestEmotion)
     }
 
     private fun showBottomSheet() {

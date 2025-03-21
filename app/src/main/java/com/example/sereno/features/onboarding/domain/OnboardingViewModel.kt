@@ -19,7 +19,6 @@ class OnboardingViewModel : ViewModel() {
     private lateinit var credentialManager: CredentialManager
     private val isLoading = MutableLiveData(false)
 
-
     fun isLoading(): LiveData<Boolean> = isLoading
 
     fun init(context: Context) {
@@ -31,7 +30,6 @@ class OnboardingViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onFail: (message: String) -> Unit
     ) {
-
         if (!::credentialManager.isInitialized) {
             Toast.makeText(context, "Credential Manager is not initialized", Toast.LENGTH_SHORT)
                 .show()

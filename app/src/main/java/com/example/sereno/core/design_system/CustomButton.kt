@@ -40,6 +40,12 @@ class CustomButton @JvmOverloads constructor(
         )
         size = styles.getInt(R.styleable.ButtonStyle_size, NORMAL)
         text = styles.getString(R.styleable.ButtonStyle_text) ?: "Continue"
+        binding.root.setBackgroundResource(
+            styles.getResourceId(
+                R.styleable.ButtonStyle_background,
+                R.drawable.primary_button
+            )
+        )
         styles.recycle()
 
         refresh()
@@ -51,9 +57,7 @@ class CustomButton @JvmOverloads constructor(
         if (iconRes != 0) {
             binding.icon.setImageResource(iconRes)
         }
-        binding.root.setBackgroundResource(
-            if (size == SMALL) R.drawable.primary_button_bg_small else R.drawable.primary_button_bg
-        )
+
         binding.icon.updateLayoutParams {
             height = iconSize.toInt()
             width = iconSize.toInt()

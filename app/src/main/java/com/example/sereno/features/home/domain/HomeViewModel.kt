@@ -1,7 +1,9 @@
 package com.example.sereno.features.home.domain
 
 import androidx.lifecycle.ViewModel
+import com.example.sereno.R
 import com.example.sereno.features.home.domain.model.ArticleModel
+import com.example.sereno.features.home.domain.model.FeelingItem
 
 class HomeViewModel : ViewModel() {
 
@@ -39,5 +41,15 @@ class HomeViewModel : ViewModel() {
             ),
         )
 
+    }
+
+    fun getLastFeelingEmotion(): FeelingItem {
+        return FeelingItem(
+            text = "Happy",
+            iconResId = R.drawable.ic_happy,
+            description = "A Very Pleasant Moment",
+            subDescription = "Joyful",
+            whatMade = "Self-care"
+        )
     }
 }

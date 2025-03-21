@@ -28,7 +28,6 @@ object SupabaseManager {
             idToken = googleIdToken
             provider = Google
             nonce = rawNonce
-
         }
     }
 

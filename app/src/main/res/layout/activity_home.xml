@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
     tools:context=".features.home.ui.HomeActivity">
 
     <ImageView
@@ -12,7 +11,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
-        android:src="@drawable/home"
+        android:src="@drawable/half_grad"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -25,7 +24,6 @@
         <include
             android:id="@+id/homeHeading"
             layout="@layout/home_heading" />
-
 
         <ScrollView
             android:layout_width="match_parent"
@@ -43,17 +41,16 @@
                     android:id="@+id/homeFeelingCard"
                     layout="@layout/home_feeling_card" />
 
-<!--                <include-->
-<!--                    android:id="@+id/homeWeekScoreCard"-->
-<!--                    layout="@layout/home_week_mood_score_card" />-->
-
                 <include
                     android:id="@+id/homeTherapyCard"
                     layout="@layout/home_therapy_card" />
 
                 <include
-                    android:id="@+id/homePremiumCard"
-                    layout="@layout/premium_offer_card" />
+                    android:id="@+id/stateOfMindCard"
+                    layout="@layout/state_of_mind_card" />
+                <!--                <include-->
+                <!--                    android:id="@+id/homePremiumCard"-->
+                <!--                    layout="@layout/premium_offer_card" />-->
 
                 <include
                     android:id="@+id/homeAmbientModeCard"

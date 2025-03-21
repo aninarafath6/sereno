@@ -11,4 +11,9 @@
     <color name="replay_strip">#094B61</color>
     <color name="bot_strip_g">#01264B</color>
     <color name="dialog_scrim">#F5000000</color>
+    <color name="surfaceContainer">#1C1C1E</color>
+    <color name="surfaceContainerAlpha">#E61C1C1E</color>
+    <color name="secondary_surface_container">#1AFFFFFF</color>
+    <color name="cyan">#00FFDD</color>
+    <color name="onSurfaceLight">#B3FFFFFF</color>
 </resources>

@@ -2,13 +2,8 @@ package com.example.sereno.features.onboarding.ui
 
 import com.example.sereno.common.audio_manager.AmbientAudioManager
 import android.content.Intent
-import android.graphics.Matrix
-import android.graphics.SurfaceTexture
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
-import android.view.Surface
-import android.view.TextureView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -47,10 +42,9 @@ class MainActivity : AppCompatActivity() {
         vm.init(this)
         ambientAudioManager.play(
             this,
-            source = R.raw.rain_ambient,
+            source = R.raw.calm_ambient,
             shouldLoop = true,
         )
-        initAmbientVideo()
         initObservers()
 
         binding.volumeButton.muteButton.onClickWithHaptics {
@@ -88,53 +82,6 @@ class MainActivity : AppCompatActivity() {
             binding.buttonContent.isVisible = !it
             binding.loading.isVisible = it
         }
-    }
-
-    private fun initAmbientVideo() {
-        mediaPlayer = MediaPlayer.create(
-            this,
-            Uri.parse("android.resource://$packageName/${R.raw.onbaording_bg_vd}")
-        )
-        binding.VideoView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-            override fun onSurfaceTextureAvailable(
-                surface: SurfaceTexture,
-                width: Int,
-                height: Int
-            ) {
-                mediaPlayer?.apply {
-                    setSurface(Surface(surface))
-                    isLooping = true
-                    setVolume(0f, 0f)
-                    setOnPreparedListener {
-                        it.start()
-                        adjustVideoSize(it, binding.VideoView)
-                    }
-                    start()
-                }
-            }
-
-            override fun onSurfaceTextureSizeChanged(
-                surface: SurfaceTexture,
-                width: Int,
-                height: Int
-            ) {
-            }
-
-            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean = false
-            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
-        }
-    }
-
-    private fun adjustVideoSize(mediaPlayer: MediaPlayer, textureView: TextureView) {
-        val videoRatio = mediaPlayer.videoWidth.toFloat() / mediaPlayer.videoHeight
-        val screenRatio = textureView.width.toFloat() / textureView.height
-
-        val scaleX = if (videoRatio > screenRatio) videoRatio / screenRatio else 1f
-        val scaleY = if (videoRatio > screenRatio) 1f else screenRatio / videoRatio
-
-        val matrix = Matrix()
-        matrix.setScale(scaleX, scaleY, textureView.width / 2f, textureView.height / 2f)
-        textureView.setTransform(matrix)
     }
 
     override fun onPause() {

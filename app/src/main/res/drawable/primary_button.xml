@@ -3,29 +3,27 @@
 
     <item android:state_enabled="false">
         <shape>
-            <corners android:radius="12dp" />
+            <corners android:radius="8dp" />
             <solid android:color="#4B4B4B" />
         </shape>
     </item>
 
     <item>
-        <ripple android:color="#991B2F45">
+        <ripple android:color="#FFAB7A">
 
             <item>
                 <shape>
-                    <corners android:radius="12dp" />
-                    <solid android:color="@color/on_container" />
+                    <corners android:radius="8dp" />
+                    <gradient android:endColor="#EB8043" android:startColor="#F29C4A" />
                 </shape>
             </item>
 
             <item android:id="@android:id/mask">
                 <shape>
                     <solid android:color="#4DFFFFFF" />
-                    <corners android:radius="12dp" />
+                    <corners android:radius="8dp" />
                 </shape>
             </item>
         </ripple>
-
     </item>
-
 </selector>
