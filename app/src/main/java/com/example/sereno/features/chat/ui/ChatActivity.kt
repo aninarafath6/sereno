@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -42,6 +43,7 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setupWindowInsets()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(binding.root)
         initListeners()
         initChatsRecyclerView()
@@ -61,11 +63,13 @@ class ChatActivity : AppCompatActivity() {
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottomPadding = maxOf(systemBars.bottom, imeInsets.bottom)
             view.setPadding(
                 0,
                 0,
                 0,
-                systemBars.bottom
+                bottomPadding
             )
             insets
         }
