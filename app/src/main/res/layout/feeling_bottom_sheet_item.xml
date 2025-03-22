@@ -3,6 +3,7 @@
     android:layout_height="75dp"
     android:layout_gravity="center"
     android:background="@drawable/feeling_item_bg"
+    android:foreground="@drawable/basic_ripple_overlay"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingVertical="10dp">

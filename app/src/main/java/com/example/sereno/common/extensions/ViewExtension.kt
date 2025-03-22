@@ -8,8 +8,9 @@ fun View.onClickWithHaptics(onClick: (() -> Unit)?) {
         setOnClickListener(null)
         return
     }
+
     setOnClickListener {
-        onClick.invoke()
         it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        onClick.invoke()
     }
 }
