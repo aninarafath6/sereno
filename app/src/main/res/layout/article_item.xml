@@ -1,36 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="153dp"
-    android:layout_height="215dp"
-    android:clipChildren="true"
-    android:elevation="0dp"
-    app:cardBackgroundColor="@color/transparent"
-    app:cardCornerRadius="@dimen/_10dp"
-    app:cardElevation="0dp">
+    android:layout_height="215dp">
 
-    <androidx.cardview.widget.CardView
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="3dp"
-        app:cardCornerRadius="8dp">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha=".8"
-            android:contentDescription="@string/article"
-            android:scaleType="centerCrop"
-            android:src="@drawable/article_bg_1" />
-    </androidx.cardview.widget.CardView>
+        android:contentDescription="@string/article"
+        android:scaleType="centerCrop"
+        android:src="@drawable/article_bg_1" />
 
     <View
         android:id="@+id/bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/home_item_bg_forground" />
+        android:alpha=".95"
+        android:background="@drawable/rounded_article_bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -78,6 +66,4 @@
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
-
-
-</androidx.cardview.widget.CardView>
+</FrameLayout>

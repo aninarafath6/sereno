@@ -25,10 +25,15 @@ class ArticlesAdapter : RecyclerView.Adapter<ArticlesAdapter.ArticlesViewHolder>
             binding.title.text = article.title
             var requestOptions = RequestOptions()
 
+            requestOptions = requestOptions.transforms(
+                CenterCrop(),
+                RoundedCorners(binding.root.context.resources.getDimensionPixelSize(R.dimen._10dp))
+            )
 
             Glide.with(binding.imageView)
                 .load(article.thumbnailURL)
                 .fallback(R.drawable.article_bg_1)
+                .apply(requestOptions)
                 .into(binding.imageView)
             binding.bg.onClickWithHaptics { }
         }
