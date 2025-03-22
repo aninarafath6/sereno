@@ -27,7 +27,7 @@ class ArticlesAdapter : RecyclerView.Adapter<ArticlesAdapter.ArticlesViewHolder>
 
             requestOptions = requestOptions.transforms(
                 CenterCrop(),
-                RoundedCorners(binding.root.context.resources.getDimensionPixelSize(R.dimen._10dp))
+                RoundedCorners(binding.root.context.resources.getDimensionPixelSize(R.dimen._12dp))
             )
 
             Glide.with(binding.imageView)
