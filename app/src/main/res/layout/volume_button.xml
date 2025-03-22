@@ -8,7 +8,7 @@
     android:background="@drawable/volume_btn_bg"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="@drawable/ripple_overlay">
+   >
 
     <ImageView
         android:id="@+id/ivMuteUnMute"

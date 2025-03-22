@@ -69,8 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:animateLayoutChanges="true"
-                android:background="@drawable/volume_btn_bg"
-                android:foreground="@drawable/ripple_overlay"
+                android:background="@drawable/dark_btn_bg"
                 android:gravity="center"
                 android:paddingHorizontal="28dp"
                 android:paddingVertical="15dp">
