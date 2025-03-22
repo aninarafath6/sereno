@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/helvetica"
             android:lineSpacingExtra="8dp"
-            android:text="hmm adf af "
+            android:text="hmm adfadfa af adf a f af a df as f asdf  asdf sad f as f asf as df dsa f asf  af "
             android:textColor="#EAEAEA"
             android:textSize="16sp" />
     </LinearLayout>

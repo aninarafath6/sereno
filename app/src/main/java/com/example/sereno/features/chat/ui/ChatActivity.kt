@@ -3,8 +3,11 @@ package com.example.sereno.features.chat.ui
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
@@ -37,10 +40,35 @@ class ChatActivity : AppCompatActivity() {
         window.statusBarColor = getColor(R.color.primary)
         window.navigationBarColor = getColor(R.color.primary)
         binding = ActivityChatBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
+        setupWindowInsets()
         setContentView(binding.root)
         initListeners()
         initChatsRecyclerView()
         initObservers()
+    }
+
+    private fun setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.heading.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                0,
+                systemBars.top,
+                0,
+                resources.getDimensionPixelSize(R.dimen._12dp)
+            )
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                0,
+                0,
+                0,
+                systemBars.bottom
+            )
+            insets
+        }
     }
 
     private fun initChatsRecyclerView() {

@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/bot_strip_g" />
+            <solid android:color="#33000000" />
             <corners android:radius="4dp" />
         </shape>
     </item>
@@ -15,7 +15,7 @@
             <corners android:radius="4dp" />
             <stroke
                 android:width="3dp"
-                android:color="@color/replay_strip" />
+                android:color="@color/primary" />
         </shape>
     </item>
 </layer-list>

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
+    android:background="#0F0F10"
     android:orientation="vertical"
     tools:context=".chat.views.ChatActivity">
 
@@ -26,7 +26,7 @@
             android:id="@+id/chats"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingHorizontal="@dimen/spacing_24dp"
+            android:paddingHorizontal="@dimen/_12dp"
             android:paddingBottom="18dp"
             app:layout_constraintBottom_toTopOf="@id/field"
             app:layout_constraintEnd_toEndOf="parent"

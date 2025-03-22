@@ -5,7 +5,8 @@
     android:layout_gravity="center"
     android:layout_marginVertical="12dp"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingHorizontal="32dp">
 
     <TextView
         android:id="@+id/date"
