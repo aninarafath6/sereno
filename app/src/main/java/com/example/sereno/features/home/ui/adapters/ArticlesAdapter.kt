@@ -35,7 +35,7 @@ class ArticlesAdapter : RecyclerView.Adapter<ArticlesAdapter.ArticlesViewHolder>
                 .fallback(R.drawable.article_bg_1)
                 .apply(requestOptions)
                 .into(binding.imageView)
-            binding.bg.onClickWithHaptics { }
+            binding.root.onClickWithHaptics { }
         }
     }
 
