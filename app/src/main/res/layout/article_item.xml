@@ -31,8 +31,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha=".8"
-            android:fontFamily="@font/helvetica"
-            android:lineSpacingExtra="4dp"
+            android:fontFamily="@font/sf_ui_text_regular"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="5"
             android:paddingEnd="20dp"
             android:text="@string/best_way_to_deal_with_salman_in_your_current_situation"
             android:textColor="@color/white"
@@ -59,8 +60,9 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/helvetica"
+                android:fontFamily="@font/sf_ui_text_regular"
                 android:text="@string/today"
+
                 android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
