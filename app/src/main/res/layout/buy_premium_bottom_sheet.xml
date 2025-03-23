@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12dp"
         android:fontFamily="@font/sf_ui_text_regular"
-        android:text="@string/unlimited_free_access_for_7_days"
+        android:text="Affordable self care for a healthier you"
         android:textColor="#99FFFFFF"
         android:textSize="16sp" />
 
