@@ -22,6 +22,7 @@ import com.example.sereno.databinding.ActivityChatBinding
 import com.example.sereno.features.chat.ui.adapter.ChatAdapter
 import com.example.sereno.features.chat.utils.ReplaySwiperHelper
 import com.example.sereno.features.chat.domain.ChatViewModel
+import com.example.sereno.features.home.ui.BuyPremiumBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -107,8 +108,7 @@ class ChatActivity : AppCompatActivity() {
         binding.heading.back.onClickWithHaptics(::finish)
         binding.field.sendButton.setOnClickListener(::sendMessage)
         binding.heading.call.onClickWithHaptics {
-            CallActivity.launch(this)
-
+            showPremiumBottomSheet()
         }
         binding.field.et.addTextChangedListener {
             if (it.toString().isNotEmpty()) {
@@ -126,6 +126,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun showPremiumBottomSheet() {
+        val bottomSheet =
+            BuyPremiumBottomSheet()
+        bottomSheet.show(
+            supportFragmentManager,
+            "ModalBottomSheet"
+        )
+    }
     private fun initObservers() {
         lifecycleScope.launch {
             vm.chats.collectLatest {

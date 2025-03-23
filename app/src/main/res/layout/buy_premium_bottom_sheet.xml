@@ -27,6 +27,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="24dp"
+        android:contentDescription="@string/continue_new"
         android:src="@drawable/ic_premium" />
 
     <TextView
@@ -43,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_12dp"
         android:fontFamily="@font/sf_ui_text_regular"
-        android:text="Affordable self care for a healthier you"
+        android:text="@string/affordable_self_care_for_a_healthier_you"
         android:textColor="#99FFFFFF"
         android:textSize="16sp" />
 
