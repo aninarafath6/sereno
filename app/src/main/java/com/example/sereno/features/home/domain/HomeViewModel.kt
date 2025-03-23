@@ -1,11 +1,31 @@
 package com.example.sereno.features.home.domain
 
+import android.content.Context
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.sereno.R
+import com.example.sereno.common.audio_manager.AmbientAudioManager
+import com.example.sereno.features.home.domain.model.AmbientItem
 import com.example.sereno.features.home.domain.model.ArticleModel
-import com.example.sereno.features.home.domain.model.FeelingItem
 
 class HomeViewModel : ViewModel() {
+    private val ambientAudioManager = AmbientAudioManager()
+    private var _muteIconVisibility = MutableLiveData(false)
+    private var selectedAmbient: AmbientItem = AmbientItem.DEFAULT
+
+    val muteIconVisibility: LiveData<Boolean> = _muteIconVisibility
+
+    fun init(context: Context, lifecycleOwner: LifecycleOwner) {
+        ambientAudioManager.getMuteStatus().observe(lifecycleOwner) {
+            _muteIconVisibility.value = it
+        }
+        refreshAmbiance(context)
+    }
+
+    fun toggleMute() {
+        ambientAudioManager.toggleMute()
+    }
 
     fun getArticles(): List<ArticleModel> {
         return listOf(
@@ -40,16 +60,38 @@ class HomeViewModel : ViewModel() {
                 "https://wonderscounseling.com/wp-content/uploads/2012/05/woman-meditation.jpg"
             ),
         )
-
     }
 
-    fun getLastFeelingEmotion(): FeelingItem {
-        return FeelingItem(
-            text = "Happy",
-            iconResId = R.drawable.ic_happy,
-            description = "A Very Pleasant Moment",
-            subDescription = "Joyful",
-            whatMade = "Self-care"
-        )
+    fun onAmbientCardClicked(context: Context, ambientItem: AmbientItem) {
+        if (ambientItem == selectedAmbient) {
+            ambientAudioManager.togglePlayBack()
+            return
+        }
+        selectedAmbient = ambientItem
+        refreshAmbiance(context)
+    }
+
+    private fun refreshAmbiance(context: Context) {
+        when (selectedAmbient) {
+            AmbientItem.CUSTOM -> {
+            }
+
+            else -> {
+                ambientAudioManager.play(context, selectedAmbient.source!!)
+                ambientAudioManager.unMute()
+            }
+        }
+    }
+
+    fun onPause() {
+        ambientAudioManager.mute()
+    }
+
+    fun onResume() {
+        ambientAudioManager.unMuteIfPossible()
+    }
+
+    fun onDestroy() {
+        ambientAudioManager.destroy()
     }
 }

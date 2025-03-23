@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import com.example.sereno.R
 import com.example.sereno.common.extensions.isInternetAvailable
 import com.example.sereno.common.extensions.onClickWithHaptics
+import com.example.sereno.core.settings.AppSettings
 import com.example.sereno.databinding.ActivityMainBinding
 import com.example.sereno.features.home.ui.HomeActivity
 import com.example.sereno.features.onboarding.domain.OnboardingViewModel
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         initObservers()
 
         binding.volumeButton.muteButton.onClickWithHaptics {
-            ambientAudioManager.toggleMute()
+            val isUserPreferMute = ambientAudioManager.toggleMute()
         }
         binding.login.onClickWithHaptics {
             if (!isInternetAvailable()) {

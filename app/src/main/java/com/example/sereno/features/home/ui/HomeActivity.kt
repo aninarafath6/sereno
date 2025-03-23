@@ -1,7 +1,6 @@
 package com.example.sereno.features.home.ui
 
 import BottomSheetDialog
-import com.example.sereno.common.audio_manager.AmbientAudioManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -17,12 +16,12 @@ import com.example.sereno.features.chat.ui.ChatActivity
 import com.example.sereno.features.home.ui.adapters.ArticlesAdapter
 import com.example.sereno.features.home.ui.item_decorator.ArticlesPaddingItemDecoration
 import com.example.sereno.features.home.domain.HomeViewModel
+import com.example.sereno.features.home.domain.model.AmbientItem
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private val vm: HomeViewModel by viewModels()
     private val articlesAdapter = ArticlesAdapter()
-    private val ambientAudioManager = AmbientAudioManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +29,7 @@ class HomeActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
         setupWindowInsets()
+        vm.init(this, this)
         initListeners()
         initObservers()
         initArticlesRecyclerView()
@@ -50,7 +50,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.homeHeading.volumeOnOff.muteButton.onClickWithHaptics {
-            ambientAudioManager.toggleMute()
+            vm.toggleMute()
         }
         binding.homeFeelingCard.feeling.onClickWithHaptics {
             showBottomSheet()
@@ -62,15 +62,19 @@ class HomeActivity : AppCompatActivity() {
             showPremiumBottomSheet()
         }
         binding.homeAmbientModeCard.focus.onClickWithHaptics {
-
+            vm.onAmbientCardClicked(this, AmbientItem.FOCUS)
         }
-        binding.homeAmbientModeCard.custom.onClickWithHaptics { }
-        binding.homeAmbientModeCard.deepSleep.onClickWithHaptics { }
+        binding.homeAmbientModeCard.custom.onClickWithHaptics {
+            vm.onAmbientCardClicked(this, AmbientItem.CUSTOM)
+        }
+        binding.homeAmbientModeCard.deepSleep.onClickWithHaptics {
+            vm.onAmbientCardClicked(this, AmbientItem.SLEEP)
+        }
     }
 
     private fun initObservers() {
-        ambientAudioManager.getMuteStatus().observe(this) { isMuted ->
-            val iconRes = if (isMuted) R.drawable.ic_volume_off else R.drawable.ic_volume_on
+        vm.muteIconVisibility.observe(this) {
+            val iconRes = if (it) R.drawable.ic_volume_off else R.drawable.ic_volume_on
             binding.homeHeading.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
         }
     }
@@ -109,21 +113,16 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        ambientAudioManager.play(
-            this,
-            source = R.raw.calm_ambient,
-            shouldLoop = true,
-        )
-        ambientAudioManager.unMute()
+        vm.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        ambientAudioManager.mute()
+        vm.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ambientAudioManager.destroy()
+        vm.onDestroy()
     }
 }

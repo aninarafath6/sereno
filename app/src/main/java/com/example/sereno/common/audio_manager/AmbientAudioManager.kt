@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.sereno.core.settings.AppSettings
 import kotlinx.coroutines.*
 import java.io.IOException
 
@@ -49,8 +50,21 @@ class AmbientAudioManager {
         toggleMuteInternal(shouldMute = false)
     }
 
+    fun unMuteIfPossible() {
+        val userPreferMute = AppSettings.getUserMuteStatePreference()
+        if (userPreferMute) return
+
+        unMute()
+    }
+
     fun toggleMute() {
         if (isMute.value == true) unMute() else mute()
+        AppSettings.setUserPreferMute(isMute.value!!)
+    }
+
+    fun togglePlayBack() {
+        if (isMute.value == true) unMute() else mute()
+        // same as toggle mute but won't change user mute preference
     }
 
     fun destroy() {
@@ -61,6 +75,7 @@ class AmbientAudioManager {
     }
 
     private fun toggleMuteInternal(shouldMute: Boolean) {
+        if (shouldMute && mediaPlayer?.isPlaying == false) return
         isMute.value = shouldMute
         mediaPlayer?.let { player ->
             player.start()
@@ -81,9 +96,7 @@ class AmbientAudioManager {
     fun getMuteStatus(): LiveData<Boolean> = isMute
 
     private fun fadeVolume(
-        startVolume: Float,
-        targetVolume: Float,
-        onComplete: (() -> Unit)? = null
+        startVolume: Float, targetVolume: Float, onComplete: (() -> Unit)? = null
     ): Job {
         return scope.launch {
             val stepDelay = FADE_DURATION / FADE_STEPS

@@ -9,6 +9,7 @@ fun View.onClickWithHaptics(onClick: (() -> Unit)?) {
         return
     }
 
+    isSoundEffectsEnabled = false
     setOnClickListener {
         it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         onClick.invoke()
