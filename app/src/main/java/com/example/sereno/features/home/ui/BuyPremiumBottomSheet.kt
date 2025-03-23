@@ -8,7 +8,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.sereno.R
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.BuyPremiumBottomSheetBinding
 import com.example.sereno.features.home.ui.adapters.PremiumBottomSheetAdapter

@@ -24,6 +24,9 @@
         android:theme="@style/Theme.Sereno"
         tools:targetApi="31">
         <activity
+            android:name=".features.state_of_mind.ui.StateOfMindActivity"
+            android:exported="false" />
+        <activity
             android:name=".features.call.ui.CallActivity"
             android:exported="false" />
         <activity

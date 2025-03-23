@@ -22,7 +22,7 @@
         <ImageView
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@drawable/ic_tierd" />
+            android:src="@drawable/ic_sleep" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
         <ImageView
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@drawable/ic_work" />
+            android:src="@drawable/ic_focus" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
         <ImageView
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@drawable/ic_meditate" />
+            android:src="@drawable/ic_custom" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -90,7 +90,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="@font/helvetica"
             android:gravity="center"
-            android:text="Meditate"
+            android:text="Custom"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="normal" />
