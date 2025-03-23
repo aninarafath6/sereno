@@ -46,13 +46,6 @@
                     android:id="@+id/homeTherapyCard"
                     layout="@layout/home_therapy_card" />
 
-<!--                <include-->
-                <!--                    android:id="@+id/stateOfMindCard"-->
-                <!--                    layout="@layout/state_of_mind_card" />-->
-                <!--                <include-->
-                <!--                    android:id="@+id/homePremiumCard"-->
-                <!--                    layout="@layout/premium_offer_card" />-->
-
                 <include
                     android:id="@+id/homeAmbientModeCard"
                     layout="@layout/home_ambient_mode_card" />
