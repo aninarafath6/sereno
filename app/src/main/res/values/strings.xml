@@ -75,4 +75,6 @@ Support progress at a comfortable pace, celebrating small wins without pressure.
     <string name="_1_04_am">1:04 AM</string>
     <string name="a_very_pleasant_moment">A Very Pleasant Moment</string>
     <string name="close">close</string>
+    <string name="upgrade_to_premium">Upgrade to Premium</string>
+    <string name="unlimited_free_access_for_7_days">Unlimited free access for 7 days</string>
 </resources>

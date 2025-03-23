@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.sereno.R
-import com.example.sereno.features.call.ui.CallActivity
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 import com.example.sereno.features.chat.ui.ChatActivity
@@ -62,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, ChatActivity::class.java))
         }
         binding.homeTherapyCard.call.onClickWithHaptics {
-            CallActivity.launch(this)
+            showPremiumBottomSheet()
         }
         binding.stateOfMindCard.root.onClickWithHaptics { }
         binding.homeAmbientModeCard.focus.onClickWithHaptics { }
@@ -99,6 +98,15 @@ class HomeActivity : AppCompatActivity() {
     private fun showBottomSheet() {
         val bottomSheet =
             BottomSheetDialog()
+        bottomSheet.show(
+            supportFragmentManager,
+            "ModalBottomSheet"
+        )
+    }
+
+    private fun showPremiumBottomSheet() {
+        val bottomSheet =
+            BuyPremiumBottomSheet()
         bottomSheet.show(
             supportFragmentManager,
             "ModalBottomSheet"

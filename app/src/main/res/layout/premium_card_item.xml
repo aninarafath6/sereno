@@ -1,0 +1,10 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:drawableStart="@drawable/ic_premium_prefix"
+    android:drawablePadding="10dp"
+    android:fontFamily="@font/sf_ui_text_medium"
+    android:text="Unlimited call and chat"
+    android:textColor="@color/white"
+    android:textSize="14dp" />
