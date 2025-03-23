@@ -19,6 +19,7 @@ import java.util.Calendar
 class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val chats = mutableListOf<ChatItemContent>()
     private var scrollToPosition: ((position: Int) -> Unit)? = null
+    private var onDoubleTapChat: ((chat:Chat) -> Unit)? = null
     private var blinkAtPosition: Int? = null
 
     override fun getItemViewType(position: Int): Int {
@@ -64,6 +65,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         scrollToPosition?.invoke(posOfReplayChat)
                         notifyItemChanged(posOfReplayChat)
                     },
+                    onDoubleTap = onDoubleTapChat,
                     clearBlinkAnimation = {
                         blinkAtPosition = null
                     })
@@ -139,6 +141,10 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun isSwipeable(position: Int): Boolean {
         val items = chats.getOrNull(position)
         return items is ChatItemContent.ChatItem
+    }
+
+    fun setOnDoubleTapChat(onDoubleTap: (chat: Chat) -> Unit) {
+        this.onDoubleTapChat = onDoubleTap
     }
 
     fun getChat(pos: Int): Chat? {

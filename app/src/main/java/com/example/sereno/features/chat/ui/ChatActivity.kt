@@ -84,6 +84,9 @@ class ChatActivity : AppCompatActivity() {
         chatAdapter.setScrollListener { position ->
             binding.chats.smoothScrollToPosition(position)
         }
+        chatAdapter.setOnDoubleTapChat {
+            vm.setSwipedChat(it)
+        }
         binding.chats.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

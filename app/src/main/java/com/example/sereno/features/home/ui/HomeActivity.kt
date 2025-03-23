@@ -61,8 +61,10 @@ class HomeActivity : AppCompatActivity() {
         binding.homeTherapyCard.call.onClickWithHaptics {
             showPremiumBottomSheet()
         }
-        binding.homeAmbientModeCard.focus.onClickWithHaptics { }
-        binding.homeAmbientModeCard.meditate.onClickWithHaptics { }
+        binding.homeAmbientModeCard.focus.onClickWithHaptics {
+
+        }
+        binding.homeAmbientModeCard.custom.onClickWithHaptics { }
         binding.homeAmbientModeCard.deepSleep.onClickWithHaptics { }
     }
 

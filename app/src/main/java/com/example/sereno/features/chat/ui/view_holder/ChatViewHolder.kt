@@ -1,20 +1,23 @@
 package com.example.sereno.features.chat.ui.view_holder
 
+import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sereno.common.extensions.onClickWithHaptics
+import com.example.sereno.common.utils.DoubleClickListener
 import com.example.sereno.databinding.ChatItemBinding
 import com.example.sereno.features.chat.data.model.Chat
 import com.example.sereno.features.chat.data.model.isUser
 import com.example.sereno.features.chat.domain.model.ChatItemContent
 
-class ChatViewHolder(private val binding: ChatItemBinding):RecyclerView.ViewHolder(binding.root) {
+class ChatViewHolder(private val binding: ChatItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(
         pos: Int,
         chats: List<ChatItemContent>,
         shouldPlayBlinkAnimation: Boolean,
         onClickChat: (id: String?) -> Unit,
+        onDoubleTap: ((chat: Chat) -> Unit)?,
         clearBlinkAnimation: () -> Unit
     ) {
         resetViews()
@@ -31,6 +34,12 @@ class ChatViewHolder(private val binding: ChatItemBinding):RecyclerView.ViewHold
         } else {
             chatView.onClickWithHaptics(null)
         }
+        chatView.setOnClickListener(object : DoubleClickListener() {
+            override fun onDoubleClick(v: View) {
+                onDoubleTap?.invoke(chat.chat)
+            }
+        })
+
         if (shouldPlayBlinkAnimation) {
             chatView.startBlinkAnimation()
             clearBlinkAnimation()
