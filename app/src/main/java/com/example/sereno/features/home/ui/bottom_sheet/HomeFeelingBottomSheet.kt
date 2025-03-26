@@ -1,3 +1,5 @@
+package com.example.sereno.features.home.ui.bottom_sheet
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +17,7 @@ import com.example.sereno.features.home.domain.model.FeelingItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-
-class BottomSheetDialog : BottomSheetDialogFragment() {
+class MoodCheckInBottomSheet : BottomSheetDialogFragment() {
     private lateinit var binding: HomeFeelingBottomSheetLayoutBinding
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private var selectedFeeling: FeelingItem? = null

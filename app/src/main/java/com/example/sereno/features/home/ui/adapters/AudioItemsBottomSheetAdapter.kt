@@ -3,33 +3,37 @@ package com.example.sereno.features.home.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.CustomSoundItemBinding
-import com.example.sereno.databinding.FeelingBottomSheetItemBinding
-import com.example.sereno.databinding.PremiumCardItemBinding
-import com.example.sereno.features.home.domain.model.FeelingItem
+import com.example.sereno.features.home.domain.model.AudioItem
 
-class CustomMusicBottomSheetAdapter(private val items: List<String>) :
-    RecyclerView.Adapter<CustomMusicBottomSheetAdapter.VH>() {
-
+class AudioItemsBottomSheetAdapter : RecyclerView.Adapter<AudioItemsBottomSheetAdapter.VH>() {
+    private val audios = mutableListOf<AudioItem>()
     inner class VH(private val binding: CustomSoundItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String) {
+        fun bind() {
+            binding.name.text = "khjj"
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = CustomSoundItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+            LayoutInflater.from(parent.context), parent, false
         )
         return VH(binding)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(items[position])
+        if (audios.isEmpty()) return
+        holder.bind()
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = audios.size
+
+    fun setAudios(audios: List<AudioItem>) {
+        this.audios.clear()
+        this.audios.addAll(audios)
+        notifyDataSetChanged()
+    }
+
+
 }
