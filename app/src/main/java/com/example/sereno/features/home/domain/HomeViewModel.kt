@@ -12,9 +12,10 @@ import com.example.sereno.features.home.domain.model.ArticleModel
 class HomeViewModel : ViewModel() {
     private val ambientAudioManager = AmbientAudioManager()
     private var _muteIconVisibility = MutableLiveData(false)
-    private var selectedAmbient: AmbientItem = AmbientItem.DEFAULT
+    private var selectedAmbient: AmbientItem = AmbientItem.NONE
 
     val muteIconVisibility: LiveData<Boolean> = _muteIconVisibility
+    fun getSelected(): AmbientItem = selectedAmbient
 
     fun init(context: Context, lifecycleOwner: LifecycleOwner) {
         ambientAudioManager.getMuteStatus().observe(lifecycleOwner) {
@@ -76,6 +77,7 @@ class HomeViewModel : ViewModel() {
             AmbientItem.CUSTOM -> {
             }
 
+            AmbientItem.NONE -> {}
             else -> {
                 ambientAudioManager.play(context, selectedAmbient.source!!)
                 ambientAudioManager.unMute()
@@ -88,7 +90,11 @@ class HomeViewModel : ViewModel() {
     }
 
     fun onResume() {
-        ambientAudioManager.unMuteIfPossible()
+        if (selectedAmbient == AmbientItem.NONE) {
+            ambientAudioManager.mute()
+        } else {
+            ambientAudioManager.unMuteIfPossible()
+        }
     }
 
     fun onDestroy() {

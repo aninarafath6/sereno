@@ -4,9 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.sereno.R
 import com.example.sereno.common.supabase.SupabaseManager
 import com.example.sereno.databinding.ActivityAuthWrapperBinding
 import com.example.sereno.features.home.ui.HomeActivity
@@ -23,10 +25,10 @@ class AuthWrapper : AppCompatActivity() {
         binding = ActivityAuthWrapperBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.transparent)
         SupabaseManager.init()
         redirect()
     }
-
 
     private fun redirect() {
         lifecycleScope.launch {

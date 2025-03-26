@@ -1,9 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.Sereno" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="background">@color/primary</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/black</item>
         <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
     <style name="Theme.Sereno" parent="Base.Theme.Sereno" />

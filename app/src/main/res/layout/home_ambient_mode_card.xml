@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -20,9 +21,19 @@
         android:paddingVertical="12dp">
 
         <ImageView
+            android:id="@+id/icSleep"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@drawable/ic_sleep" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/sleepLoading"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/musi_loading" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,9 +61,19 @@
         android:paddingVertical="12dp">
 
         <ImageView
+            android:id="@+id/icFocus"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:src="@drawable/ic_focus" />
+            android:src="@drawable/ic_focus"
+            android:visibility="gone" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/focusLoading"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/musi_loading" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -80,9 +101,19 @@
         android:paddingVertical="12dp">
 
         <ImageView
+            android:id="@+id/icCustom"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@drawable/ic_custom" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/customLoading"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/musi_loading" />
 
         <TextView
             android:layout_width="wrap_content"

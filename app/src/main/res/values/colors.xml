@@ -9,10 +9,12 @@
     <color name="chat_border_color">#1AFFFFFF</color>
     <color name="dialog_scrim">#F5000000</color>
     <color name="surfaceContainer">#1C1C1E</color>
+    <color name="surfaceContainerSecondary">#333335</color>
     <color name="surfaceContainerAlpha">#E61C1C1E</color>
     <color name="secondary_surface_container">#1AFFFFFF</color>
     <color name="cyan">#00FFDD</color>
     <color name="onSurfaceLight">#B3FFFFFF</color>
     <color name="surfaceContainerStroke">#33FFFFFF</color>
     <color name="surfaceContainerPrimary">#0DE79152</color>
+    <color name="chat_bg">#0F0F10</color>
 </resources>

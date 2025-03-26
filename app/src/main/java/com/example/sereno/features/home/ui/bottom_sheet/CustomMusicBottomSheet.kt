@@ -1,4 +1,4 @@
-package com.example.sereno.features.home.ui
+package com.example.sereno.features.home.ui.bottom_sheet
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,29 +10,24 @@ import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.BuyPremiumBottomSheetBinding
+import com.example.sereno.databinding.MusicMixBottomSheetBinding
+import com.example.sereno.features.home.ui.adapters.CustomMusicBottomSheetAdapter
 import com.example.sereno.features.home.ui.adapters.PremiumBottomSheetAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class BuyPremiumBottomSheet : BottomSheetDialogFragment() {
-    private lateinit var binding: BuyPremiumBottomSheetBinding
+class CustomMusicBottomSheet : BottomSheetDialogFragment() {
+    private lateinit var binding: MusicMixBottomSheetBinding
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
 
-    private val premiumOptions = mutableListOf(
-        "Unlimited call and chat",
-        "Real time low latency call",
-        "Exclusive music for sleep and relaxation",
-        "Personalised articles to improve mental health",
-        "Sleep analysis"
-    )
-    private val adapter = PremiumBottomSheetAdapter(premiumOptions)
+    private val adapter = CustomMusicBottomSheetAdapter(listOf("", "", "", "", "", ""))
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = BuyPremiumBottomSheetBinding.inflate(inflater, container, false)
+        binding = MusicMixBottomSheetBinding.inflate(inflater, container, false)
         dialog?.window?.setDimAmount(0f)
         dialog?.window?.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
@@ -54,23 +49,16 @@ class BuyPremiumBottomSheet : BottomSheetDialogFragment() {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
             dismiss()
         }
-        binding.continueButton.onClickWithHaptics {
-            Toast.makeText(
-                context,
-                "We will notify when premium features arrive.",
-                Toast.LENGTH_SHORT
-            ).show()
-            dismiss()
-        }
     }
 
     override fun onStart() {
         super.onStart()
-
         binding.root.doOnLayout {
             val bottomSheet = binding.root.parent as View
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
             bottomSheetBehavior?.addBottomSheetCallback(bottomSheetCallback)
+            bottomSheetBehavior?.skipCollapsed = true
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
             val initialAlpha =
                 if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) 1f else 0.5f
@@ -81,7 +69,7 @@ class BuyPremiumBottomSheet : BottomSheetDialogFragment() {
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             val alpha = ((slideOffset + 1) / 2) * 1f
-            dialog?.window?.setDimAmount(alpha)
+            dialog?.window?.setDimAmount(alpha.coerceIn(0f, .8f))
         }
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {

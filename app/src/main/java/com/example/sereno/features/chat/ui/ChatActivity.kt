@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,7 +22,7 @@ import com.example.sereno.databinding.ActivityChatBinding
 import com.example.sereno.features.chat.ui.adapter.ChatAdapter
 import com.example.sereno.features.chat.utils.ReplaySwiperHelper
 import com.example.sereno.features.chat.domain.ChatViewModel
-import com.example.sereno.features.home.ui.BuyPremiumBottomSheet
+import com.example.sereno.features.home.ui.bottom_sheet.BuyPremiumBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,10 +39,9 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = getColor(R.color.primary)
-        window.navigationBarColor = getColor(R.color.primary)
         binding = ActivityChatBinding.inflate(layoutInflater)
         enableEdgeToEdge()
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.chat_bg)
         setupWindowInsets()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(binding.root)
@@ -136,6 +136,7 @@ class ChatActivity : AppCompatActivity() {
             "ModalBottomSheet"
         )
     }
+
     private fun initObservers() {
         lifecycleScope.launch {
             vm.chats.collectLatest {

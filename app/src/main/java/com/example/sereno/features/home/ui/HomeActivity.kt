@@ -3,11 +3,15 @@ package com.example.sereno.features.home.ui
 import BottomSheetDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.R
 import com.example.sereno.common.extensions.onClickWithHaptics
@@ -17,6 +21,8 @@ import com.example.sereno.features.home.ui.adapters.ArticlesAdapter
 import com.example.sereno.features.home.ui.item_decorator.ArticlesPaddingItemDecoration
 import com.example.sereno.features.home.domain.HomeViewModel
 import com.example.sereno.features.home.domain.model.AmbientItem
+import com.example.sereno.features.home.ui.bottom_sheet.BuyPremiumBottomSheet
+import com.example.sereno.features.home.ui.bottom_sheet.CustomMusicBottomSheet
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -26,7 +32,9 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         enableEdgeToEdge()
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         setContentView(binding.root)
         setupWindowInsets()
         vm.init(this, this)
@@ -65,7 +73,11 @@ class HomeActivity : AppCompatActivity() {
             vm.onAmbientCardClicked(this, AmbientItem.FOCUS)
         }
         binding.homeAmbientModeCard.custom.onClickWithHaptics {
-            vm.onAmbientCardClicked(this, AmbientItem.CUSTOM)
+            val bottomSheet = CustomMusicBottomSheet()
+            bottomSheet.show(
+                supportFragmentManager,
+                "ModalBottomSheet"
+            )
         }
         binding.homeAmbientModeCard.deepSleep.onClickWithHaptics {
             vm.onAmbientCardClicked(this, AmbientItem.SLEEP)
@@ -76,7 +88,48 @@ class HomeActivity : AppCompatActivity() {
         vm.muteIconVisibility.observe(this) {
             val iconRes = if (it) R.drawable.ic_volume_off else R.drawable.ic_volume_on
             binding.homeHeading.volumeOnOff.ivMuteUnMute.setImageResource(iconRes)
+            resetMusicPlayStateUi()
+            if (!it) {
+                when (vm.getSelected()) {
+                    AmbientItem.CUSTOM -> {
+                        setPlayingMusicItem(
+                            binding.homeAmbientModeCard.customLoading,
+                            binding.homeAmbientModeCard.icCustom
+                        )
+                    }
+
+                    AmbientItem.FOCUS -> {
+                        setPlayingMusicItem(
+                            binding.homeAmbientModeCard.focusLoading,
+                            binding.homeAmbientModeCard.icFocus
+                        )
+                    }
+
+                    AmbientItem.SLEEP -> {
+                        setPlayingMusicItem(
+                            binding.homeAmbientModeCard.sleepLoading,
+                            binding.homeAmbientModeCard.icSleep
+                        )
+                    }
+
+                    AmbientItem.NONE -> {}
+                }
+            }
         }
+    }
+
+    private fun setPlayingMusicItem(loadingView: View, icon: View) {
+        loadingView.isVisible = true
+        icon.isVisible = false
+    }
+
+    private fun resetMusicPlayStateUi() {
+        binding.homeAmbientModeCard.focusLoading.isVisible = false
+        binding.homeAmbientModeCard.customLoading.isVisible = false
+        binding.homeAmbientModeCard.sleepLoading.isVisible = false
+        binding.homeAmbientModeCard.icSleep.isVisible = true
+        binding.homeAmbientModeCard.icFocus.isVisible = true
+        binding.homeAmbientModeCard.icCustom.isVisible = true
     }
 
     private fun initArticlesRecyclerView() {

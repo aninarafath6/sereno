@@ -7,4 +7,4 @@
     android:fontFamily="@font/sf_ui_text_medium"
     android:text="Unlimited call and chat"
     android:textColor="@color/white"
-    android:textSize="14dp" />
+    android:textSize="14sp" />
