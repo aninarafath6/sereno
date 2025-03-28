@@ -35,7 +35,7 @@ class NormalAudioVH(
         }
 
         binding.root.onClickWithHaptics {
-            audioVm.updateItem(item.copy(isPlaying = !item.isPlaying))
+            audioVm.updatePlayingForNormalAudio(item.id)
         }
     }
 }

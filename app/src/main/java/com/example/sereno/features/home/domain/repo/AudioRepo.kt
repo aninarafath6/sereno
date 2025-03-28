@@ -6,7 +6,7 @@ import com.example.sereno.features.home.domain.model.NormalAudio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MusicRepo {
+class AudioRepo {
     suspend fun getNormalAudio(): List<NormalAudio> {
         val normalAudios = withContext(Dispatchers.IO) {
             listOf(

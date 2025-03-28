@@ -51,7 +51,7 @@ class CustomAudioVH(
         )
 
         binding.root.onClickWithHaptics {
-            audioVm.updateItem(item.copy(isPlaying = !item.isPlaying))
+            audioVm.updatePlayingForCustomAudios(item.copy(isPlaying = !item.isPlaying))
         }
     }
 }
