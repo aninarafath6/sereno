@@ -32,7 +32,7 @@ class MusicRepo {
                     musicURL = "http://www.bogotobogo.com/Audio/sample.mp3",
                     previewImageUrl = "https://www.usatoday.com/gcdn/presto/2023/06/23/USAT/4448a61c-3fad-466c-bb56-f704f34c7fd5-felix-mittermeier-Zkx_DgMQink-unsplash.jpg?crop=1436,1077,x0,y0",
                     subtitle = "Anxiety-free sound effect",
-                    isPlaying = true
+                    isPlaying = false
                 ),
                 NormalAudio(
                     id = 4,
@@ -40,7 +40,7 @@ class MusicRepo {
                     musicURL = "http://www.bogotobogo.com/Audio/sample.mp3",
                     previewImageUrl = "https://images.unsplash.com/photo-1515963665762-77ef90e624fa?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YmlnJTIwY2l0eXxlbnwwfHwwfHx8MA%3D%3D",
                     subtitle = "Fall asleep fast",
-                    isPlaying = true
+                    isPlaying = false
                 ),
                 NormalAudio(
                     id = 5,
@@ -48,7 +48,7 @@ class MusicRepo {
                     musicURL = "http://www.bogotobogo.com/Audio/sample.mp3",
                     previewImageUrl = "https://gl.audubon.org/sites/default/files/styles/article_hero_inline/public/aud_apa-2020_barn-swallow_a1-11258-1_nape_photo-xianwei-zeng.jpg?itok=hEJFNc9a",
                     subtitle = "Soft and light track",
-                    isPlaying = true
+                    isPlaying = false
                 )
             )
         }

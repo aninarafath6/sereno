@@ -21,14 +21,6 @@ class AudioItemsBottomSheetAdapter(private val audioVm: AudioViewmodel) :
         private const val NORMAL_AUDIO_ITEM = 2
     }
 
-    init {
-        setHasStableIds(true)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return audios[position].id
-    }
-
     override fun getItemViewType(position: Int): Int {
         return if (audios.first() is NormalAudio) NORMAL_AUDIO_ITEM else CUSTOM_AUDIO_ITEM
     }
@@ -49,7 +41,7 @@ class AudioItemsBottomSheetAdapter(private val audioVm: AudioViewmodel) :
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ), audioVm
             )
         }
         return vh

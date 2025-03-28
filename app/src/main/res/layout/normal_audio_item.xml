@@ -36,6 +36,14 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_play_circle" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/playing_state"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lottie_music_playing" />
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
