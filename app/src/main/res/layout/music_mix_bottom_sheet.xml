@@ -42,9 +42,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_12dp"
+            android:alpha=".8"
             android:fontFamily="@font/sf_ui_text_regular"
             android:text="@string/boost_focus_relaxation_or_sleep"
-            android:textColor="#99FFFFFF"
+            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -56,7 +57,7 @@
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             tools:itemCount="6"
-            tools:listitem="@layout/custom_sound_item" />
+            tools:listitem="@layout/custom_audio_item" />
 
         <LinearLayout
             android:id="@+id/loading"

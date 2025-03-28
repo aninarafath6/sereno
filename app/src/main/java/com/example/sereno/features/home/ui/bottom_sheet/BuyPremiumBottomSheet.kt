@@ -52,7 +52,6 @@ class BuyPremiumBottomSheet : BottomSheetDialogFragment() {
     private fun initListeners() {
         binding.close.onClickWithHaptics {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
-            dismiss()
         }
         binding.continueButton.onClickWithHaptics {
             Toast.makeText(

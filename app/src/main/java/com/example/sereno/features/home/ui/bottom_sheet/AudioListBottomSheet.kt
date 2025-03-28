@@ -5,24 +5,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.MusicMixBottomSheetBinding
-import com.example.sereno.features.home.domain.HomeViewModel
-import com.example.sereno.features.home.domain.model.Ambiance
 import com.example.sereno.features.home.ui.adapters.AudioItemsBottomSheetAdapter
+import com.example.sereno.features.home.ui.model.BottomSheetModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class AudioListBottomSheet(private val homeVm: HomeViewModel, private val ambiance: Ambiance) :
+class AudioListBottomSheet(private val lifecycleOwner: LifecycleOwner, val data: BottomSheetModel) :
     BottomSheetDialogFragment() {
+
     private lateinit var binding: MusicMixBottomSheetBinding
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
+    private val adapter = AudioItemsBottomSheetAdapter(data.audioVm)
 
-    private val adapter = AudioItemsBottomSheetAdapter()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.decorView?.let {
+            ViewCompat.setOnApplyWindowInsetsListener(it) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.setPadding(0, systemBars.top, 0, 0)
+                insets
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -33,38 +45,33 @@ class AudioListBottomSheet(private val homeVm: HomeViewModel, private val ambian
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
-        homeVm.getAudios(
-            ambiance,
-            onLoading = {
-                binding.loading.isVisible = true
-                binding.rv.isVisible = false
-            },
-            onAudiosReady = {
-                binding.loading.isVisible = false
-                binding.rv.isVisible = true
-                adapter.setAudios(it)
-            },
-            onFailed = {
-            },
-        )
 
-        initListeners()
+        data.getAudios()
         initRv()
         initUi()
+        initObserver()
+        initListeners()
         return binding.root
     }
 
+    private fun initObserver() {
+        data.audioVm.getLoading.observe(lifecycleOwner) {
+            binding.rv.isVisible = !it
+            binding.loading.isVisible = it
+        }
+        data.audioVm.audios.observe(lifecycleOwner) {
+            adapter.setAudios(it)
+        }
+    }
+
     private fun initUi() {
-        binding.title.text = ambiance.title
-        binding.subTitle.isEnabled = ambiance.subTitle.isNotEmpty()
-        binding.subTitle.text = ambiance.subTitle
+        binding.title.text = data.title
+        binding.subTitle.text = data.subtitle
     }
 
     private fun initRv() {
         binding.rv.adapter = adapter
-        binding.rv.overScrollMode = View.OVER_SCROLL_NEVER
         binding.rv.layoutManager = LinearLayoutManager(context)
-        binding.rv.itemAnimator = DefaultItemAnimator()
     }
 
     private fun initListeners() {

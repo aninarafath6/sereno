@@ -14,17 +14,20 @@ import com.example.sereno.R
 import com.example.sereno.common.extensions.onClickWithHaptics
 import com.example.sereno.databinding.ActivityHomeBinding
 import com.example.sereno.features.chat.ui.ChatActivity
-import com.example.sereno.features.home.domain.HomeViewModel
-import com.example.sereno.features.home.domain.model.Ambiance
+import com.example.sereno.features.home.ui.view_model.HomeViewModel
 import com.example.sereno.features.home.ui.adapters.ArticlesAdapter
 import com.example.sereno.features.home.ui.bottom_sheet.AudioListBottomSheet
 import com.example.sereno.features.home.ui.bottom_sheet.BuyPremiumBottomSheet
 import com.example.sereno.features.home.ui.bottom_sheet.MoodCheckInBottomSheet
 import com.example.sereno.features.home.ui.item_decorator.ArticlesPaddingItemDecoration
+import com.example.sereno.features.home.ui.model.BottomSheetModel
+import com.example.sereno.features.home.ui.view_model.AudioViewmodel
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private val vm: HomeViewModel by viewModels()
+    private val audioVm: AudioViewmodel by viewModels()
+
     private val articlesAdapter = ArticlesAdapter()
     private val moodCheckInBottomSheet = MoodCheckInBottomSheet()
     private val bottomSheet = BuyPremiumBottomSheet()
@@ -37,7 +40,6 @@ class HomeActivity : AppCompatActivity() {
         window.navigationBarColor = ContextCompat.getColor(this, R.color.black)
         setContentView(binding.root)
         setupWindowInsets()
-        vm.init()
         initListeners()
         initArticlesRecyclerView()
     }
@@ -65,19 +67,42 @@ class HomeActivity : AppCompatActivity() {
             bottomSheet.show(supportFragmentManager, "ModalBottomSheet")
         }
         binding.homeAmbientModeCard.focus.onClickWithHaptics {
-            showMusicBottomSheet(Ambiance.Focus)
+            showMusicBottomSheet(
+                BottomSheetModel(
+                    audioVm,
+                    title = "Focus Flow",
+                    subtitle = "Clarity, productivity, or concentration"
+                ) {
+                    audioVm.fetchFocusAudios()
+                },
+            )
         }
         binding.homeAmbientModeCard.custom.onClickWithHaptics {
-            showMusicBottomSheet(Ambiance.Custom)
+            showMusicBottomSheet(
+                BottomSheetModel(
+                    audioVm,
+                    title = "Custom sound mix",
+                    subtitle = "Boost focus, relaxation, or sleep"
+                ) {
+                    audioVm.fetchCustomAudios()
+                },
+            )
         }
         binding.homeAmbientModeCard.deepSleep.onClickWithHaptics {
-            showMusicBottomSheet(Ambiance.Sleep)
+            showMusicBottomSheet(
+                BottomSheetModel(
+                    audioVm,
+                    title = "Sleep Soundscapes",
+                    subtitle = "Calm, restful, or deep slumber"
+                ) {
+                    audioVm.fetchSleepAudios()
+                },
+            )
         }
-
     }
 
-    private fun showMusicBottomSheet(ambiance: Ambiance) {
-        val audioBottomSheet = AudioListBottomSheet(vm, ambiance)
+    private fun showMusicBottomSheet(data: BottomSheetModel) {
+        val audioBottomSheet = AudioListBottomSheet(this, data)
         audioBottomSheet.show(supportFragmentManager, "ModalBottomSheet")
     }
 
@@ -94,5 +119,4 @@ class HomeActivity : AppCompatActivity() {
             )
         )
     }
-
 }
