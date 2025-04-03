@@ -9,16 +9,18 @@ import com.example.sereno.features.home.domain.model.CustomAudio
 import com.example.sereno.features.home.domain.model.NormalAudio
 import com.example.sereno.features.home.domain.repo.AudioRepo
 import com.example.sereno.features.home.domain.use_cases.PersistAudioVolumeUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class AudioViewmodel : ViewModel() {
     private val audioRepo = AudioRepo()
-    private var _resolvedAudios = MutableLiveData<List<BaseAudio>>()
+    private var _resolvedAudios = MutableStateFlow<List<BaseAudio>>(emptyList())
     private val persistAudioVolumeUseCase = PersistAudioVolumeUseCase(audioRepo)
     private val isLoading = MutableLiveData(false)
 
     val getLoading: LiveData<Boolean> = isLoading
-    val audios: LiveData<List<BaseAudio>> get() = _resolvedAudios
+    val audios: StateFlow<List<BaseAudio>> get() = _resolvedAudios
 
     fun fetchFocusAudios() {
         viewModelScope.launch {
@@ -54,19 +56,25 @@ class AudioViewmodel : ViewModel() {
     }
 
     fun updatePlayingForNormalAudio(id: Long) {
-        _resolvedAudios.value = _resolvedAudios.value?.map { audio ->
-            audio as NormalAudio
-            if (audio.id == id) {
-                audio.copy(isPlaying = !audio.isPlaying)
-            } else {
-                audio.copy(isPlaying = false)
+        viewModelScope.launch {
+            _resolvedAudios.value.map { audio ->
+                audio as NormalAudio
+                if (audio.id == id) {
+                    audio.copy(isPlaying = !audio.isPlaying)
+                } else {
+                    audio.copy(isPlaying = false)
+                }
+            }.let {
+                _resolvedAudios.emit(it)
             }
         }
     }
 
     private fun updateItem(newAudio: BaseAudio) {
-        _resolvedAudios.value = _resolvedAudios.value?.map { audio ->
+        _resolvedAudios.value.map { audio ->
             if (audio.id == newAudio.id) newAudio else audio
+        }.let {
+            _resolvedAudios.value = it
         }
     }
 }
