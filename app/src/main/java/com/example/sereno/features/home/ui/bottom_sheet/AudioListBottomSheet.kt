@@ -17,6 +17,10 @@ import com.example.sereno.features.home.ui.adapters.AudioItemsBottomSheetAdapter
 import com.example.sereno.features.home.ui.model.BottomSheetModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class AudioListBottomSheet(private val lifecycleOwner: LifecycleOwner, val data: BottomSheetModel) :
     BottomSheetDialogFragment() {
@@ -59,8 +63,10 @@ class AudioListBottomSheet(private val lifecycleOwner: LifecycleOwner, val data:
             binding.rv.isVisible = !it
             binding.loading.isVisible = it
         }
-        data.audioVm.audios.observe(lifecycleOwner) {
-            adapter.setAudios(it)
+        CoroutineScope(Dispatchers.Main).launch {
+            data.audioVm.audios.collectLatest {
+                adapter.setAudios(it)
+            }
         }
     }
 

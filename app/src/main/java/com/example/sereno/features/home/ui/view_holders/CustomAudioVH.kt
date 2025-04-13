@@ -39,13 +39,13 @@ class CustomAudioVH(
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    audioVm.updateVolume(item.copy(volumeLevel = progress))
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    seekBar?.let { audioVm.updateVolume(item.copy(volumeLevel = seekBar.progress)) }
                 }
             },
         )
