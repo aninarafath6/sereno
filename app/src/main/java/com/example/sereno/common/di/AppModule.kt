@@ -2,6 +2,9 @@ package com.example.sereno.common.di
 
 import android.content.Context
 import androidx.room.Room
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.sereno.audio.speech_recognizer.SpeechRecognizer
 import com.example.sereno.features.chat.data.room.ChatsDao
 import com.example.sereno.features.chat.data.room.ChatsDatabase
@@ -31,8 +34,17 @@ object AppModule {
     fun provideChatsDao(chatsDatabase: ChatsDatabase): ChatsDao {
         return chatsDatabase.dao
     }
+
     @Provides
     fun provideSpeechRecognizer(): SpeechRecognizer {
         return SpeechRecognizer()
     }
+
+    @Provides
+    @Singleton
+    fun provideGlideInstance(@ApplicationContext context: Context) =
+        Glide.with(context).setDefaultRequestOptions(
+            RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+        )
 }

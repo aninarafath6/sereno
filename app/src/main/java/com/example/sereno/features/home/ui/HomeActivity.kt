@@ -22,7 +22,9 @@ import com.example.sereno.features.home.ui.bottom_sheet.MoodCheckInBottomSheet
 import com.example.sereno.features.home.ui.item_decorator.ArticlesPaddingItemDecoration
 import com.example.sereno.features.home.ui.model.BottomSheetModel
 import com.example.sereno.features.home.ui.view_model.AudioViewmodel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private val vm: HomeViewModel by viewModels()

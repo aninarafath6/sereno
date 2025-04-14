@@ -95,9 +95,15 @@ dependencies {
     implementation("androidx.room:room-guava:2.6.1")
     testImplementation("androidx.room:room-testing:2.5.2")
 
-    implementation ("com.airbnb.android:lottie:3.5.0")
-    implementation ("androidx.work:work-runtime:2.7.0")
+    implementation("com.airbnb.android:lottie:3.5.0")
+    implementation("androidx.work:work-runtime:2.7.0")
     implementation("androidx.work:work-runtime-ktx:2.3.1")
+
+
+    // ExoPlayer
+    api("com.google.android.exoplayer:exoplayer-core:2.19.1")
+    api("com.google.android.exoplayer:exoplayer-ui:2.19.1")
+    api("com.google.android.exoplayer:extension-mediasession:2.19.1")
 
 
 }
